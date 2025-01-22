@@ -19,6 +19,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.arm.*;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -40,9 +42,11 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
+  private final Arm arm;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -64,6 +68,19 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(camera0Name, robotToCamera0),
                 new VisionIOPhotonVision(camera1Name, robotToCamera1));
+        arm =
+            new Arm(
+                "Arm",
+                new ArmIOSpark(
+                    0,
+                    Rotation2d.fromDegrees(0),
+                    false,
+                    false,
+                    2 * Math.PI,
+                    2 * Math.PI / 60,
+                    40,
+                    2,
+                    0));
         break;
 
       case SIM:
@@ -80,6 +97,16 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
+        arm =
+            new Arm(
+                "Arm",
+                new ArmIOSim(
+                    Units.degreesToRadians(-75),
+                    Units.degreesToRadians(255),
+                    200,
+                    (2.0 * Math.PI / 4096),
+                    1.0,
+                    1.0));
         break;
 
       default:
@@ -92,6 +119,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        arm = new Arm("Arm", new ArmIO() {});
         break;
     }
 
@@ -175,6 +203,50 @@ public class RobotContainer {
                         () -> 0.0,
                         () -> 0.0,
                         () -> aimController.calculate(vision.getTargetX(0).getRadians()))));
+
+    // Default arm command, hold in position
+    arm.setDefaultCommand(
+        Commands.run(
+            () -> {
+              arm.hold();
+            },
+            arm));
+
+    operatorController
+        .a()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  arm.runVoltage(3);
+                },
+                arm));
+
+    operatorController
+        .b()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  arm.runVoltage(-3);
+                },
+                arm));
+
+    operatorController
+        .x()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  arm.runToAngle(Rotation2d.fromDegrees(90));
+                },
+                arm));
+
+    operatorController
+        .y()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  arm.runToAngle(Rotation2d.fromDegrees(0));
+                },
+                arm));
   }
 
   /**
