@@ -36,10 +36,10 @@ public class DriveConstants {
 
   // Zeroed rotation values for each module, see setup instructions
   // position with the drive gear facing the right side of the robot
-  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(-0.598 + Math.PI);
-  public static final Rotation2d frontRightZeroRotation = new Rotation2d(-2.594 + Math.PI);
-  public static final Rotation2d backLeftZeroRotation = new Rotation2d(0.317 - Math.PI);
-  public static final Rotation2d backRightZeroRotation = new Rotation2d(-0.150 + Math.PI);
+  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(-2.548);
+  public static final Rotation2d frontRightZeroRotation = new Rotation2d(-.543);
+  public static final Rotation2d backLeftZeroRotation = new Rotation2d(2.821);
+  public static final Rotation2d backRightZeroRotation = new Rotation2d(-3);
 
   // Device CAN IDs
   public static final int pigeonCanId = 0;
@@ -70,27 +70,27 @@ public class DriveConstants {
   // Drive PID configuration
   public static final double driveKp = 0.0;
   public static final double driveKd = 0.0;
-  public static final double driveKs = 0.0;
-  public static final double driveKv = 0.1;
+  public static final double driveKs = 0.44;
+  public static final double driveKv = 0.11;
   public static final double driveSimP = 0.05;
   public static final double driveSimD = 0.0;
   public static final double driveSimKs = 0.0;
   public static final double driveSimKv = 0.0789;
 
   // Turn motor configuration
-  public static final boolean turnInverted = false;
+  public static final boolean turnInverted = true;
   public static final int turnMotorCurrentLimit = 20;
   public static final double turnMotorReduction = 9424.0 / 203.0;
   public static final DCMotor turnGearbox = DCMotor.getNeo550(1);
 
   // Turn encoder configuration
-  public static final boolean turnEncoderInverted = true;
+  public static final boolean turnEncoderInverted = false;
   public static final double turnEncoderPositionFactor = 2 * Math.PI; // Rotations -> Radians
   public static final double turnEncoderVelocityFactor = (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
 
   // Turn PID configuration
-  public static final double turnKp = 0.7;
-  public static final double turnKd = 0.5;
+  public static final double turnKp = 30.0;
+  public static final double turnKd = 0.0;
   public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;
   public static final double turnPIDMinInput = 0; // Radians

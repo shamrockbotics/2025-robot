@@ -149,7 +149,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/Drive/Module0/TurnPosition/value",
+                    "logKey": "NT:/AdvantageKit/Drive/Module0/TurnPosition/value",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -159,7 +159,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/Drive/Module1/TurnPosition/value",
+                    "logKey": "NT:/AdvantageKit/Drive/Module1/TurnPosition/value",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -169,7 +169,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/Drive/Module2/TurnPosition/value",
+                    "logKey": "NT:/AdvantageKit/Drive/Module2/TurnPosition/value",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -179,7 +179,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/Drive/Module3/TurnPosition/value",
+                    "logKey": "NT:/AdvantageKit/Drive/Module3/TurnPosition/value",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -214,7 +214,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/Drive/Module0/DrivePositionRad",
+                    "logKey": "NT:/AdvantageKit/Drive/Module0/DrivePositionRad",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -224,7 +224,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/Drive/Module1/DrivePositionRad",
+                    "logKey": "NT:/AdvantageKit/Drive/Module1/DrivePositionRad",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -234,7 +234,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/Drive/Module2/DrivePositionRad",
+                    "logKey": "NT:/AdvantageKit/Drive/Module2/DrivePositionRad",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -244,7 +244,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "/Drive/Module3/DrivePositionRad",
+                    "logKey": "NT:/AdvantageKit/Drive/Module3/DrivePositionRad",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -414,7 +414,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/Drive/Module0/DriveCurrentAmps",
+                    "logKey": "NT:/AdvantageKit/Drive/Module0/DriveCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -426,7 +426,7 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "/Drive/Module0/DriveVelocityRadPerSec",
+                    "logKey": "NT:/AdvantageKit/Drive/Module0/DriveVelocityRadPerSec",
                     "logType": "Number",
                     "visible": true,
                     "options": {
