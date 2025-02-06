@@ -2,7 +2,6 @@ package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.Encoder;
@@ -69,22 +68,22 @@ public class ArmIOSim implements ArmIO {
     encoderSim.setDistance(armSim.getAngleRads());
 
     inputs.connected = true;
-    inputs.target = new Rotation2d(controller.getSetpoint());
-    inputs.position = new Rotation2d(encoder.getDistance());
-    inputs.velocityRadPerSec = armSim.getVelocityRadPerSec();
+    inputs.targetAngleRads = controller.getSetpoint();
+    inputs.currentAngleRads = encoder.getDistance();
+    inputs.velocityRadsPerSec = armSim.getVelocityRadPerSec();
     inputs.appliedVolts = appliedVolts;
     inputs.currentAmps = armSim.getCurrentDrawAmps();
   }
 
   @Override
-  public void setPosition(Rotation2d rotation) {
+  public void setPosition(double angleRads) {
     closedLoop = true;
-    controller.setSetpoint(rotation.getRadians());
+    controller.setSetpoint(angleRads);
   }
 
   @Override
-  public void setVoltage(double volts) {
+  public void setOutput(double output) {
     closedLoop = false;
-    appliedVolts = volts;
+    appliedVolts = output * maxVoltage;
   }
 }

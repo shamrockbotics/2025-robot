@@ -19,7 +19,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -68,19 +67,7 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(camera0Name, robotToCamera0),
                 new VisionIOPhotonVision(camera1Name, robotToCamera1));
-        arm =
-            new Arm(
-                "Arm",
-                new ArmIOSpark(
-                    0,
-                    Rotation2d.fromDegrees(0),
-                    false,
-                    false,
-                    2 * Math.PI,
-                    2 * Math.PI / 60,
-                    40,
-                    2,
-                    0));
+        arm = new Arm(new JellybeanArmConfig());
         break;
 
       case SIM:
@@ -97,16 +84,7 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
-        arm =
-            new Arm(
-                "Arm",
-                new ArmIOSim(
-                    Units.degreesToRadians(-75),
-                    Units.degreesToRadians(255),
-                    200,
-                    (2.0 * Math.PI / 4096),
-                    1.0,
-                    1.0));
+        arm = new Arm(new JellybeanArmConfig(false));
         break;
 
       default:
@@ -119,7 +97,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        arm = new Arm("Arm", new ArmIO() {});
+        arm = new Arm(new ArmConfig() {});
         break;
     }
 
@@ -217,7 +195,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  arm.runVoltage(3);
+                  arm.run(0.3);
                 },
                 arm));
 
@@ -226,7 +204,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  arm.runVoltage(-3);
+                  arm.run(-0.3);
                 },
                 arm));
 
@@ -235,7 +213,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  arm.runToAngle(Rotation2d.fromDegrees(90));
+                  arm.runToDegrees(90);
                 },
                 arm));
 
@@ -244,7 +222,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  arm.runToAngle(Rotation2d.fromDegrees(0));
+                  arm.runToDegrees(0);
                 },
                 arm));
   }

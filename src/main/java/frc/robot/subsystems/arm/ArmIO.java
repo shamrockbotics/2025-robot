@@ -1,25 +1,26 @@
 package frc.robot.subsystems.arm;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ArmIO {
   @AutoLog
   public static class ArmIOInputs {
     public boolean connected = false;
-    public Rotation2d target = new Rotation2d();
-    public Rotation2d position = new Rotation2d();
-    public double velocityRadPerSec = 0.0;
+    public double targetAngleRads = 0.0;
+    public double currentAngleRads = 0.0;
+    public double velocityRadsPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
   }
+
+  public double maxVoltage = 12.0;
 
   /** Update the set of loggable inputs. */
   public default void updateInputs(ArmIOInputs inputs) {}
 
   /** Run the arm to the specified rotation. */
-  public default void setPosition(Rotation2d rotation) {}
+  public default void setPosition(double angleRads) {}
 
-  /** Run open loop at the specified voltage. */
-  public default void setVoltage(double volts) {}
+  /** Run open loop at the specified output in the range [-1, 1]. */
+  public default void setOutput(double output) {}
 }

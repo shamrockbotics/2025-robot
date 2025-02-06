@@ -15,11 +15,10 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.geometry.Rotation2d;
 import java.util.function.DoubleSupplier;
 
 public class ArmIOSpark implements ArmIO {
-  private final Rotation2d zeroRotation;
+  private final double zeroOffsetRads;
 
   // Hardware objects
   private final SparkBase spark;
@@ -33,7 +32,7 @@ public class ArmIOSpark implements ArmIO {
 
   public ArmIOSpark(
       int id,
-      Rotation2d zeroRotation,
+      double zeroOffsetRads,
       boolean motorInverted,
       boolean encoderInverted,
       double encoderPositionFactor,
@@ -41,7 +40,7 @@ public class ArmIOSpark implements ArmIO {
       int currentLimit,
       double turnKp,
       double turnKd) {
-    this.zeroRotation = zeroRotation;
+    this.zeroOffsetRads = zeroOffsetRads;
     spark = new SparkMax(id, MotorType.kBrushless);
     encoder = spark.getAbsoluteEncoder();
     controller = spark.getClosedLoopController();
@@ -83,10 +82,10 @@ public class ArmIOSpark implements ArmIO {
 
   @Override
   public void updateInputs(ArmIOInputs inputs) {
-    // Update drive inputs
+    // Update inputs
     sparkStickyFault = false;
-    ifOk(spark, encoder::getPosition, (value) -> inputs.position = Rotation2d.fromRadians(value));
-    ifOk(spark, encoder::getVelocity, (value) -> inputs.velocityRadPerSec = value);
+    ifOk(spark, encoder::getPosition, (value) -> inputs.currentAngleRads = value);
+    ifOk(spark, encoder::getVelocity, (value) -> inputs.velocityRadsPerSec = value);
     ifOk(
         spark,
         new DoubleSupplier[] {spark::getAppliedOutput, spark::getBusVoltage},
@@ -96,9 +95,8 @@ public class ArmIOSpark implements ArmIO {
   }
 
   @Override
-  public void setPosition(Rotation2d rotation) {
-    double setpoint =
-        MathUtil.inputModulus(rotation.plus(zeroRotation).getRadians(), 0, 2 * Math.PI);
+  public void setPosition(double angleRads) {
+    double setpoint = MathUtil.inputModulus(angleRads + zeroOffsetRads, 0, 2 * Math.PI);
     controller.setReference(setpoint, ControlType.kPosition);
   }
 }
