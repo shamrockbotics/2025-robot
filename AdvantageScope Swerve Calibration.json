@@ -1,23 +1,23 @@
 {
   "hubs": [
     {
-      "x": 139,
-      "y": 95,
-      "width": 1100,
-      "height": 650,
+      "x": -8,
+      "y": -8,
+      "width": 1296,
+      "height": 688,
       "state": {
         "sidebar": {
           "width": 300,
           "expanded": [
-            "/AdvantageKit/Drive",
-            "/AdvantageKit/RealOutputs",
-            "/AdvantageKit/RealOutputs/SwerveStates",
-            "/AdvantageKit/RealOutputs/SwerveChassisSpeeds",
-            "/AdvantageKit/RealOutputs/Odometry"
+            "/Drive",
+            "/RealOutputs",
+            "NT:/AdvantageKit/RealOutputs/SwerveStates",
+            "NT:/AdvantageKit/RealOutputs/SwerveChassisSpeeds",
+            "NT:/AdvantageKit/RealOutputs/Odometry"
           ]
         },
         "tabs": {
-          "selected": 1,
+          "selected": 5,
           "tabs": [
             {
               "type": 0,
@@ -169,6 +169,7 @@
                   },
                   {
                     "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/Drive/Module2/TurnPosition/value",
                     "logKey": "NT:/AdvantageKit/Drive/Module2/TurnPosition/value",
                     "logType": "Number",
                     "visible": true,
