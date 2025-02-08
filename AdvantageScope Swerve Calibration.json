@@ -170,7 +170,6 @@
                   {
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/Drive/Module2/TurnPosition/value",
-                    "logKey": "NT:/AdvantageKit/Drive/Module2/TurnPosition/value",
                     "logType": "Number",
                     "visible": true,
                     "options": {

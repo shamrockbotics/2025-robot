@@ -15,8 +15,9 @@ public class JellybeanArmConfig extends ArmConfig {
     if (real) {
       io =
           new ArmIOSpark(
-              1,
-              Units.degreesToRadians(30),
+              15,
+              13,
+              Units.degreesToRadians(0),
               false,
               false,
               2 * Math.PI,

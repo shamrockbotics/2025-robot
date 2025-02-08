@@ -195,7 +195,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  arm.run(0.3);
+                  arm.run(0.1);
                 },
                 arm));
 
@@ -204,7 +204,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  arm.run(-0.3);
+                  arm.run(-0.1);
                 },
                 arm));
 

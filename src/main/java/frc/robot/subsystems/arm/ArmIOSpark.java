@@ -31,6 +31,45 @@ public class ArmIOSpark implements ArmIO {
   private final Debouncer connectedDebounce = new Debouncer(0.5);
 
   public ArmIOSpark(
+      int id1,
+      int id2,
+      double zeroOffsetRads,
+      boolean motorInverted,
+      boolean encoderInverted,
+      double encoderPositionFactor,
+      double encoderVelocityFactor,
+      int currentLimit,
+      double turnKp,
+      double turnKd) {
+    this(
+        id1,
+        zeroOffsetRads,
+        motorInverted,
+        encoderInverted,
+        encoderPositionFactor,
+        encoderVelocityFactor,
+        currentLimit,
+        turnKp,
+        turnKd);
+    SparkBase followerSpark = new SparkMax(id2, MotorType.kBrushless);
+    SparkMaxConfig followerSparkConfig = new SparkMaxConfig();
+    followerSparkConfig
+        .inverted(!motorInverted)
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(currentLimit)
+        .voltageCompensation(maxVoltage)
+        .follow(spark);
+    tryUntilOk(
+        followerSpark,
+        5,
+        () ->
+            followerSpark.configure(
+                followerSparkConfig,
+                ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters));
+  }
+
+  public ArmIOSpark(
       int id,
       double zeroOffsetRads,
       boolean motorInverted,
@@ -50,7 +89,7 @@ public class ArmIOSpark implements ArmIO {
         .inverted(motorInverted)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(currentLimit)
-        .voltageCompensation(12.0);
+        .voltageCompensation(maxVoltage);
     sparkConfig
         .absoluteEncoder
         .inverted(encoderInverted)
@@ -98,5 +137,10 @@ public class ArmIOSpark implements ArmIO {
   public void setPosition(double angleRads) {
     double setpoint = MathUtil.inputModulus(angleRads + zeroOffsetRads, 0, 2 * Math.PI);
     controller.setReference(setpoint, ControlType.kPosition);
+  }
+
+  @Override
+  public void setOutput(double value) {
+    spark.setVoltage(value * maxVoltage);
   }
 }
