@@ -9,7 +9,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -55,11 +54,10 @@ public class ArmIOSparkRIO implements ArmIO {
     SparkBase followerSpark = new SparkMax(id2, MotorType.kBrushless);
     SparkMaxConfig followerSparkConfig = new SparkMaxConfig();
     followerSparkConfig
-        .inverted(!motorInverted)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(currentLimit)
         .voltageCompensation(maxVoltage)
-        .follow(spark);
+        .follow(spark, true);
     tryUntilOk(
         followerSpark,
         5,
@@ -125,8 +123,7 @@ public class ArmIOSparkRIO implements ArmIO {
   @Override
   public void setPosition(double angleRads) {
     setpoint = angleRads;
-    double offsetSetpoint = MathUtil.inputModulus(angleRads + zeroOffsetRads, 0, 2 * Math.PI);
-    double output = controller.calculate(getAngle(), offsetSetpoint);
+    double output = controller.calculate(getAngle(), setpoint);
     output = Math.min(0.2, Math.max(-0.2, output));
     setOutput(output);
   }
@@ -137,6 +134,6 @@ public class ArmIOSparkRIO implements ArmIO {
   }
 
   private double getAngle() {
-    return encoder.get() * 2 * Math.PI;
+    return encoder.get() * 2 * Math.PI - zeroOffsetRads;
   }
 }

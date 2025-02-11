@@ -213,7 +213,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  arm.runToDegrees(90);
+                  arm.runToAngle(1.4);
                 },
                 arm));
 
@@ -222,7 +222,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  arm.runToDegrees(0);
+                  arm.runToAngle(0);
                 },
                 arm));
   }
