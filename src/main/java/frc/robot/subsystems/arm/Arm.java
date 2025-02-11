@@ -4,7 +4,9 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
@@ -18,6 +20,9 @@ public class Arm extends SubsystemBase {
 
   private double lastRunAngle = 0.0;
 
+  public MechanismLigament2d visualization;
+  public DoubleSupplier visualizationAngleOffset = () -> 0.0;
+
   public Arm(ArmConfig config) {
     setName(config.name);
     io = config.io;
@@ -26,13 +31,18 @@ public class Arm extends SubsystemBase {
     maxAngleRads = config.maxAngleRads;
     allowedErrorRads = config.allowedErrorRads;
 
-    disconnectedAlert = new Alert(config.name + " disconnected.", AlertType.kError);
+    disconnectedAlert = new Alert(getName() + " disconnected.", AlertType.kError);
+
+    visualization = new MechanismLigament2d(getName(), 1, lastRunAngle);
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(this.getName(), inputs);
+
+    visualization.setAngle(
+        Units.radiansToDegrees(getAngle()) - visualizationAngleOffset.getAsDouble());
 
     disconnectedAlert.set(!inputs.connected);
   }
@@ -83,7 +93,7 @@ public class Arm extends SubsystemBase {
     io.setPosition(lastRunAngle);
   }
 
-  /** Returns the current turn angle of the arm. */
+  /** Returns the current angle of the arm in radians. */
   public double getAngle() {
     return inputs.currentAngleRads;
   }

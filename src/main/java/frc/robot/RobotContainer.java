@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -41,7 +42,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-  private final Arm arm;
+  private final Arm jellybeanArm;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -67,7 +68,7 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(camera0Name, robotToCamera0),
                 new VisionIOPhotonVision(camera1Name, robotToCamera1));
-        arm = new Arm(new JellybeanArmConfig());
+        jellybeanArm = new Arm(new JellybeanArmConfig());
         break;
 
       case SIM:
@@ -84,7 +85,7 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
-        arm = new Arm(new JellybeanArmConfig(false));
+        jellybeanArm = new Arm(new JellybeanArmConfig(false));
         break;
 
       default:
@@ -97,7 +98,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        arm = new Arm(new ArmConfig() {});
+        jellybeanArm = new Arm(new ArmConfig() {});
         break;
     }
 
@@ -122,6 +123,9 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    // Configure visualizaition
+    configureVisualization();
   }
 
   /**
@@ -183,48 +187,62 @@ public class RobotContainer {
                         () -> aimController.calculate(vision.getTargetX(0).getRadians()))));
 
     // Default arm command, hold in position
-    arm.setDefaultCommand(
+    jellybeanArm.setDefaultCommand(
         Commands.run(
             () -> {
-              arm.hold();
+              jellybeanArm.hold();
             },
-            arm));
+            jellybeanArm));
 
     operatorController
         .a()
         .whileTrue(
             Commands.run(
                 () -> {
-                  arm.run(0.1);
+                  jellybeanArm.run(0.1);
                 },
-                arm));
+                jellybeanArm));
 
     operatorController
         .b()
         .whileTrue(
             Commands.run(
                 () -> {
-                  arm.run(-0.1);
+                  jellybeanArm.run(-0.1);
                 },
-                arm));
+                jellybeanArm));
 
     operatorController
         .x()
         .whileTrue(
             Commands.run(
                 () -> {
-                  arm.runToAngle(1.4);
+                  jellybeanArm.runToAngle(1.4);
                 },
-                arm));
+                jellybeanArm));
 
     operatorController
         .y()
         .whileTrue(
             Commands.run(
                 () -> {
-                  arm.runToAngle(0);
+                  jellybeanArm.runToAngle(0);
                 },
-                arm));
+                jellybeanArm));
+  }
+
+  private void configureVisualization() {
+    Mechanism2d jellybeanView = new Mechanism2d(60, 60);
+
+    MechanismRoot2d armRoot = jellybeanView.getRoot("Arm Root", 30, 20);
+    MechanismLigament2d holder = new MechanismLigament2d("Note Holder", 20, 55);
+    armRoot.append(holder);
+
+    jellybeanArm.visualization.setLength(20);
+    jellybeanArm.visualizationAngleOffset = () -> holder.getAngle();
+    holder.append(jellybeanArm.visualization);
+
+    SmartDashboard.putData("Jellybean", jellybeanView);
   }
 
   /**
