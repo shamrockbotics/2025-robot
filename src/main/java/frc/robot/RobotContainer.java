@@ -11,9 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-
 package frc.robot;
-
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -25,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -32,8 +31,6 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import frc.robot.subsystems.ArmSubsystem;
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -48,15 +45,13 @@ public class RobotContainer {
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
 
-
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
-
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (Constants.currentMode) {
-        case REAL:
+      case REAL:
         // Real robot, instantiate hardware IO implementations;
         drive =
             new Drive(
@@ -66,7 +61,6 @@ public class RobotContainer {
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
         break;
-
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
@@ -78,7 +72,6 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim());
         break;
-
 
       default:
         // Replayed robot, disable IO implementations
@@ -92,10 +85,8 @@ public class RobotContainer {
         break;
     }
 
-
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -113,11 +104,9 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-
     // Configure the button bindings
     configureButtonBindings();
   }
-
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -134,7 +123,6 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
-
     // Lock to 0° when A button is held
     controller
         .a()
@@ -145,11 +133,9 @@ public class RobotContainer {
                 () -> -controller.getLeftX(),
                 () -> new Rotation2d()));
 
-
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
     controller.y().onTrue(Commands.runOnce(() -> armSubsystem.setArmPosition(.5), armSubsystem));
-
 
     // Reset gyro to 0° when B button is pressed
     controller
@@ -163,7 +149,6 @@ public class RobotContainer {
                 .ignoringDisable(true));
   }
 
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -172,7 +157,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
-
 
   public ArmSubsystem getArmSubsystem() {
     return armSubsystem;
