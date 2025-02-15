@@ -14,14 +14,12 @@
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 
 public class VisionConstants {
   // AprilTag layout
-  public static AprilTagFieldLayout aprilTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+  public static AprilTagFieldLayout aprilTagLayout;
 
   // Camera names, must match names configured on coprocessor
   public static String camera0Name = "camera_0";
@@ -55,4 +53,20 @@ public class VisionConstants {
   public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
   public static double angularStdDevMegatag2Factor =
       Double.POSITIVE_INFINITY; // No rotation data available
+
+  // Static block to load the AprilTag layout from a file
+  static {
+    try {
+      // Full path to the JSON file
+      String jsonFilePath =
+          "src/main/deploy/whshallway1.json"; // Adjust this to the correct path on your system
+
+      aprilTagLayout = new AprilTagFieldLayout(jsonFilePath);
+
+      System.out.println("AprilTag layout loaded successfully.");
+    } catch (Exception e) {
+      System.err.println("Error loading AprilTag layout: " + e.getMessage());
+      e.printStackTrace();
+    }
+  }
 }
