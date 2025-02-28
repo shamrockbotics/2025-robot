@@ -214,7 +214,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Drive/Module0/DrivePositionRad",
+                    "logKey": "NT:/AdvantageKit/Drive/Module0/AdvantageKit/DrivePositionRad",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -224,7 +224,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Drive/Module1/DrivePositionRad",
+                    "logKey": "NT:/AdvantageKit/Drive/Module1/AdvantageKit/DrivePositionRad",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -234,7 +234,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Drive/Module2/DrivePositionRad",
+                    "logKey": "NT:/AdvantageKit/Drive/Module2/AdvantageKit/DrivePositionRad",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -244,7 +244,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Drive/Module3/DrivePositionRad",
+                    "logKey": "NT:/AdvantageKit/Drive/Module3/AdvantageKit/DrivePositionRad",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -414,7 +414,7 @@
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Drive/Module0/DriveCurrentAmps",
+                    "logKey": "NT:/AdvantageKit/Drive/Module0/AdvantageKit/DriveCurrentAmps",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -426,7 +426,7 @@
                 "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/Drive/Module0/DriveVelocityRadPerSec",
+                    "logKey": "NT:/AdvantageKit/Drive/Module0/AdvantageKit/DriveVelocityRadPerSec",
                     "logType": "Number",
                     "visible": true,
                     "options": {
