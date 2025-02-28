@@ -17,6 +17,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Filesystem;
 
 public class VisionConstants {
   // AprilTag layout
@@ -67,15 +68,15 @@ public class VisionConstants {
   public static double angularStdDevMegatag2Factor =
       Double.POSITIVE_INFINITY; // No rotation data available
 
-  // public static AprilTagFieldLayout aprilTagLayout =
-  //     AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
-
   // Static block to load the AprilTag layout from a file
   static {
     try {
       // Full path to the JSON file
       String jsonFilePath =
-          "deploy/whshallway1.json"; // Adjust this to the correct path on your system
+          Filesystem.getDeployDirectory()
+              + "/whshallway1.json"; // Adjust this to the correct path on your system
+
+      System.out.println("Path: " + jsonFilePath);
 
       aprilTagLayout = new AprilTagFieldLayout(jsonFilePath);
 

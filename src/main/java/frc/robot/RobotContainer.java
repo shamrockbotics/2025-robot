@@ -161,7 +161,6 @@ public class RobotContainer {
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    controller.y().onTrue(Commands.runOnce(() -> armSubsystem.setArmPosition(.5), armSubsystem));
 
     // Reset gyro to 0° when B button is pressed
     controller
@@ -277,9 +276,5 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
-  }
-
-  public ArmSubsystem getArmSubsystem() {
-    return armSubsystem;
   }
 }
