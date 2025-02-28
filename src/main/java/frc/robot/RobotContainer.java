@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.arm.*;
 import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.elevator.*;
 import frc.robot.subsystems.vision.*;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -43,6 +44,7 @@ public class RobotContainer {
   private final Drive drive;
   private final Vision vision;
   private final Arm jellybeanArm;
+  private final Elevator elevator;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -70,6 +72,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(camera1Name, robotToCamera1),
                 new VisionIOPhotonVision(camera2Name, robotToCamera2));
         jellybeanArm = new Arm(new JellybeanArmConfig());
+        elevator = new Elevator(new ElevatorSpecificConfig());
         break;
 
       case SIM:
@@ -87,6 +90,7 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
         jellybeanArm = new Arm(new JellybeanArmConfig(false));
+        elevator = new Elevator(new ElevatorSpecificConfig(false));
         break;
 
       default:
@@ -100,6 +104,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         jellybeanArm = new Arm(new ArmConfig() {});
+        elevator = new Elevator(new ElevatorConfig() {});
         break;
     }
 
@@ -230,20 +235,38 @@ public class RobotContainer {
                   jellybeanArm.runToAngle(0);
                 },
                 jellybeanArm));
+
+    operatorController
+        .rightTrigger()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  elevator.runToAngle(0);
+                },
+                elevator));
   }
 
   private void configureVisualization() {
     Mechanism2d jellybeanView = new Mechanism2d(60, 60);
+    Mechanism2d elevatorView = new Mechanism2d(60, 60);
+
+    MechanismRoot2d elevatorRoot = elevatorView.getRoot("Elevator Root", 30, 20);
+    MechanismLigament2d elevatorHolder = new MechanismLigament2d("Elevator Holder", 20, 55);
 
     MechanismRoot2d armRoot = jellybeanView.getRoot("Arm Root", 30, 20);
-    MechanismLigament2d holder = new MechanismLigament2d("Note Holder", 20, 55);
-    armRoot.append(holder);
+    MechanismLigament2d armHolder = new MechanismLigament2d("Arm Holder", 20, 55);
+    armRoot.append(armHolder);
+    elevatorRoot.append(elevatorHolder);
+    elevator.visualization.setLength(20);
+    elevator.visualizationAngleOffset = () -> elevatorHolder.getLength();
+    elevatorHolder.append(elevator.visualization);
 
     jellybeanArm.visualization.setLength(20);
-    jellybeanArm.visualizationAngleOffset = () -> holder.getAngle();
-    holder.append(jellybeanArm.visualization);
+    jellybeanArm.visualizationAngleOffset = () -> armHolder.getAngle();
+    armHolder.append(jellybeanArm.visualization);
 
     SmartDashboard.putData("Jellybean", jellybeanView);
+    SmartDashboard.putData("Elevator", elevatorView);
   }
 
   /**

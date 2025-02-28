@@ -67,6 +67,9 @@ public class VisionConstants {
   public static double angularStdDevMegatag2Factor =
       Double.POSITIVE_INFINITY; // No rotation data available
 
+  // public static AprilTagFieldLayout aprilTagLayout =
+  //     AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+
   // Static block to load the AprilTag layout from a file
   static {
     try {
