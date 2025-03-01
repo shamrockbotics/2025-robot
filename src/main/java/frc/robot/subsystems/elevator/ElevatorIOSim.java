@@ -38,7 +38,7 @@ public class ElevatorIOSim implements ElevatorIO {
             lengthMeters,
             minAngleRads,
             maxAngleRads,
-            true,
+            false,
             0,
             radsPerPulse,
             0.0);

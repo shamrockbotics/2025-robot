@@ -38,7 +38,7 @@ public class ArmIOSim implements ArmIO {
             lengthMeters,
             minAngleRads,
             maxAngleRads,
-            true,
+            false,
             0,
             radsPerPulse,
             0.0);

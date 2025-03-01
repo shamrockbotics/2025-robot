@@ -43,7 +43,8 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-  private final Arm jellybeanArm;
+  private final Arm coralElbow;
+  private final Arm coralWrist;
   private final Elevator elevator;
 
   // Controller
@@ -71,7 +72,8 @@ public class RobotContainer {
                 new VisionIOPhotonVision(camera0Name, robotToCamera0),
                 new VisionIOPhotonVision(camera1Name, robotToCamera1),
                 new VisionIOPhotonVision(camera2Name, robotToCamera2));
-        jellybeanArm = new Arm(new JellybeanArmConfig());
+        coralElbow = new Arm(new CoralIntakeElbowConfig());
+        coralWrist = new Arm(new CoralIntakeWristConfig());
         elevator = new Elevator(new ElevatorSpecificConfig());
         break;
 
@@ -89,7 +91,8 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
-        jellybeanArm = new Arm(new JellybeanArmConfig(false));
+        coralElbow = new Arm(new CoralIntakeElbowConfig(false));
+        coralWrist = new Arm(new CoralIntakeWristConfig(false));
         elevator = new Elevator(new ElevatorSpecificConfig(false));
         break;
 
@@ -103,7 +106,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        jellybeanArm = new Arm(new ArmConfig() {});
+        coralElbow = new Arm(new ArmConfig() {});
+        coralWrist = new Arm(new ArmConfig() {});
         elevator = new Elevator(new ElevatorConfig() {});
         break;
     }
@@ -193,59 +197,57 @@ public class RobotContainer {
                         () -> aimController.calculate(vision.getTargetX(0).getRadians()))));
 
     // Default arm command, hold in position
-    jellybeanArm.setDefaultCommand(
+    coralElbow.setDefaultCommand(
         Commands.run(
             () -> {
-              jellybeanArm.hold();
+              coralElbow.hold();
             },
-            jellybeanArm));
+            coralElbow));
+    coralWrist.setDefaultCommand(
+        Commands.run(
+            () -> {
+              coralWrist.hold();
+            },
+            coralWrist));
 
     operatorController
         .a()
         .whileTrue(
             Commands.run(
                 () -> {
-                  jellybeanArm.run(0.1);
+                  coralElbow.run(0.1);
                 },
-                jellybeanArm));
+                coralElbow));
 
     operatorController
         .b()
         .whileTrue(
             Commands.run(
                 () -> {
-                  jellybeanArm.run(-0.1);
+                  coralElbow.run(-0.1);
                 },
-                jellybeanArm));
+                coralElbow));
 
     operatorController
         .x()
         .whileTrue(
             Commands.run(
                 () -> {
-                  jellybeanArm.runToAngle(1.4);
+                  coralElbow.runToAngle(1.4);
                 },
-                jellybeanArm));
+                coralElbow));
 
     operatorController
         .y()
         .whileTrue(
             Commands.run(
                 () -> {
-                  jellybeanArm.runToAngle(0);
+                  coralElbow.runToAngle(0);
                 },
-                jellybeanArm));
+                coralElbow));
 
     operatorController
         .rightTrigger()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  elevator.runToAngle(.05);
-                },
-                elevator));
-    operatorController
-        .leftTrigger()
         .whileTrue(
             Commands.run(
                 () -> {
@@ -263,14 +265,14 @@ public class RobotContainer {
 
     MechanismRoot2d armRoot = jellybeanView.getRoot("Arm Root", 30, 20);
     MechanismLigament2d armHolder = new MechanismLigament2d("Arm Holder", 20, 90);
-    elevatorRoot.append(elevatorHolder);
-    elevatorHolder.append(armHolder);
     elevator.visualization.setAngle(90);
-    elevatorHolder.append(elevator.visualization);
+    elevatorRoot.append(elevator.visualization);
 
-    jellybeanArm.visualization.setLength(10);
-    jellybeanArm.visualizationAngleOffset = () -> armHolder.getAngle();
-    armHolder.append(jellybeanArm.visualization);
+    coralElbow.visualization.setLength(10);
+    elevator.visualization.append(coralElbow.visualization);
+
+    coralWrist.visualization.setLength(10);
+    coralElbow.visualization.append(coralWrist.visualization);
 
     SmartDashboard.putData("Jellybean", jellybeanView);
     SmartDashboard.putData("Elevator", elevatorView);

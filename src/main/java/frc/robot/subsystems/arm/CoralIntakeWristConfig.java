@@ -8,7 +8,7 @@ public class CoralIntakeWristConfig extends ArmConfig {
   }
 
   public CoralIntakeWristConfig(boolean real) {
-    name = "Algae Intake";
+    name = "Coral Intake Wrist";
     minAngleRads = 2;
     maxAngleRads = 0;
     allowedErrorRads = Units.degreesToRadians(2);
