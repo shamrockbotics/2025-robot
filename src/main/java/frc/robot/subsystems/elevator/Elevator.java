@@ -1,6 +1,5 @@
 package frc.robot.subsystems.elevator;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -41,8 +40,7 @@ public class Elevator extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs(this.getName(), inputs);
 
-    visualization.setAngle(
-        Units.radiansToDegrees(getAngle()) - visualizationAngleOffset.getAsDouble());
+    visualization.setLength(getLength());
 
     disconnectedAlert.set(!inputs.connected);
   }
@@ -52,8 +50,8 @@ public class Elevator extends SubsystemBase {
    *
    * @param angleRads Angle in radians
    */
-  public void runToAngle(double angleRads) {
-    io.setPosition(MathUtil.clamp(angleRads, minAngleRads, maxAngleRads));
+  public void runToAngle(double height) {
+    io.setPosition(height);
     lastRunAngle = getAngle();
   }
 
@@ -96,6 +94,10 @@ public class Elevator extends SubsystemBase {
   /** Returns the current angle of the arm in radians. */
   public double getAngle() {
     return inputs.currentAngleRads;
+  }
+
+  public double getLength() {
+    return inputs.currentHeight;
   }
 
   /** Returns true if the arm angle is within the allowed error of the target angle. */
