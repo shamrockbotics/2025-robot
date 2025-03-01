@@ -110,6 +110,7 @@ public class ElevatorIOSparkRIO implements ElevatorIO {
     // Update inputs
     sparkStickyFault = false;
     inputs.currentAngleRads = getAngle();
+    inputs.currentHeight = getAngle() * .049;
     inputs.targetAngleRads = setpoint;
     inputs.velocityRadsPerSec = 0.0; // figure out velocity later
     ifOk(

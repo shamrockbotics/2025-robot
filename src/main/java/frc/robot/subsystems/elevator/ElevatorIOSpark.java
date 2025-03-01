@@ -134,7 +134,8 @@ public class ElevatorIOSpark implements ElevatorIO {
   }
 
   @Override
-  public void setPosition(double angleRads) {
+  public void setPosition(double height) {
+    double angleRads = height / .049;
     double setpoint = MathUtil.inputModulus(angleRads + zeroOffsetRads, 0, 2 * Math.PI);
     controller.setReference(setpoint, ControlType.kPosition);
   }

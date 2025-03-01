@@ -241,6 +241,14 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
+                  elevator.runToAngle(.05);
+                },
+                elevator));
+    operatorController
+        .leftTrigger()
+        .whileTrue(
+            Commands.run(
+                () -> {
                   elevator.runToAngle(0);
                 },
                 elevator));
@@ -250,18 +258,17 @@ public class RobotContainer {
     Mechanism2d jellybeanView = new Mechanism2d(60, 60);
     Mechanism2d elevatorView = new Mechanism2d(60, 60);
 
-    MechanismRoot2d elevatorRoot = elevatorView.getRoot("Elevator Root", 30, 20);
-    MechanismLigament2d elevatorHolder = new MechanismLigament2d("Elevator Holder", 20, 55);
+    MechanismRoot2d elevatorRoot = elevatorView.getRoot("Elevator Root", 30, 0);
+    MechanismLigament2d elevatorHolder = new MechanismLigament2d("Elevator Holder", 10, 0);
 
     MechanismRoot2d armRoot = jellybeanView.getRoot("Arm Root", 30, 20);
-    MechanismLigament2d armHolder = new MechanismLigament2d("Arm Holder", 20, 55);
-    armRoot.append(armHolder);
+    MechanismLigament2d armHolder = new MechanismLigament2d("Arm Holder", 20, 90);
     elevatorRoot.append(elevatorHolder);
-    elevator.visualization.setLength(20);
-    elevator.visualizationAngleOffset = () -> elevatorHolder.getLength();
+    elevatorHolder.append(armHolder);
+    elevator.visualization.setAngle(90);
     elevatorHolder.append(elevator.visualization);
 
-    jellybeanArm.visualization.setLength(20);
+    jellybeanArm.visualization.setLength(10);
     jellybeanArm.visualizationAngleOffset = () -> armHolder.getAngle();
     armHolder.append(jellybeanArm.visualization);
 
