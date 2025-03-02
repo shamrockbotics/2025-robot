@@ -45,6 +45,11 @@ public class RobotContainer {
   private final Vision vision;
   private final Arm jellybeanArm;
   private final Elevator elevator;
+  private final Arm coralElbow;
+  private final Arm coralWrist;
+  private final Arm coralIntake;
+  private final Arm algaeIntake;
+  private final Arm climber;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -73,6 +78,11 @@ public class RobotContainer {
                 new VisionIOPhotonVision(camera2Name, robotToCamera2));
         jellybeanArm = new Arm(new JellybeanArmConfig());
         elevator = new Elevator(new ElevatorSpecificConfig());
+        coralElbow = new Arm(new CoralIntakeElbowConfig());
+        coralWrist = new Arm(new CoralIntakeWristConfig());
+        coralIntake = new Arm(new CoralIntakeConfig());
+        algaeIntake = new Arm(new AlgaeIntakeConfig());
+        climber = new Arm(new ClimberConfig());
         break;
 
       case SIM:
@@ -91,6 +101,11 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
         jellybeanArm = new Arm(new JellybeanArmConfig(false));
         elevator = new Elevator(new ElevatorSpecificConfig(false));
+        coralElbow = new Arm(new CoralIntakeElbowConfig(false));
+        coralWrist = new Arm(new CoralIntakeWristConfig(false));
+        coralIntake = new Arm(new CoralIntakeConfig(false));
+        algaeIntake = new Arm(new AlgaeIntakeConfig(false));
+        climber = new Arm(new ClimberConfig(false));
         break;
 
       default:
@@ -105,6 +120,11 @@ public class RobotContainer {
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         jellybeanArm = new Arm(new ArmConfig() {});
         elevator = new Elevator(new ElevatorConfig() {});
+        coralElbow = new Arm(new CoralIntakeElbowConfig() {});
+        coralWrist = new Arm(new CoralIntakeWristConfig() {});
+        coralIntake = new Arm(new CoralIntakeConfig() {});
+        algaeIntake = new Arm(new AlgaeIntakeConfig() {});
+        climber = new Arm(new ClimberConfig() {});
         break;
     }
 
@@ -199,24 +219,26 @@ public class RobotContainer {
               jellybeanArm.hold();
             },
             jellybeanArm));
-
+    // Arbitrary values but raises elevator and opens coral elbow at the same time. Can preset A to
+    // be the tallest option that will reach the tallest place where we have to put the coral
     operatorController
         .a()
         .whileTrue(
             Commands.run(
                 () -> {
-                  jellybeanArm.run(0.1);
-                },
-                jellybeanArm));
-
+                  elevator.runToHeight(1);
+                  coralElbow.runToAngle(1.2);
+                  coralWrist.runToAngle(1.2);
+                }));
+    // Arbitrary values again but lowers elevator and coral wrist into the robot.
     operatorController
         .b()
         .whileTrue(
             Commands.run(
                 () -> {
-                  jellybeanArm.run(-0.1);
-                },
-                jellybeanArm));
+                  elevator.runToHeight(0);
+                  coralElbow.runToAngle(0);
+                }));
 
     operatorController
         .x()
@@ -235,23 +257,24 @@ public class RobotContainer {
                   jellybeanArm.runToAngle(0);
                 },
                 jellybeanArm));
-
+    // Coral intake running when right trigger pressed
     operatorController
         .rightTrigger()
         .whileTrue(
             Commands.run(
                 () -> {
-                  elevator.runToAngle(.05);
+                  coralIntake.run(1);
                 },
-                elevator));
+                coralIntake));
+    // Arbitrary values but compresses climber to hang on to cage.
     operatorController
         .leftTrigger()
         .whileTrue(
             Commands.run(
                 () -> {
-                  elevator.runToAngle(0);
+                  climber.runToAngle(-1.2);
                 },
-                elevator));
+                climber));
   }
 
   private void configureVisualization() {

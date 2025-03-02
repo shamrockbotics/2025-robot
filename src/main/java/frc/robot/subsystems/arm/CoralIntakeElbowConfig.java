@@ -9,8 +9,8 @@ public class CoralIntakeElbowConfig extends ArmConfig {
 
   public CoralIntakeElbowConfig(boolean real) {
     name = "Algae Intake";
-    minAngleRads = 2;
-    maxAngleRads = 0;
+    minAngleRads = 0;
+    maxAngleRads = 2;
     allowedErrorRads = Units.degreesToRadians(2);
     if (real) {
       io =
