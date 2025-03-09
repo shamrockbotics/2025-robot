@@ -50,7 +50,7 @@ public class Elevator extends SubsystemBase {
    *
    * @param angleRads Angle in radians
    */
-  public void runToAngle(double height) {
+  public void runToHeight(double height) {
     io.setPosition(height);
     lastRunAngle = getAngle();
   }
@@ -61,7 +61,7 @@ public class Elevator extends SubsystemBase {
    * @param degrees Angle in degrees
    */
   public void runToDegrees(double degrees) {
-    runToAngle(Units.degreesToRadians(degrees));
+    runToHeight(Units.degreesToRadians(degrees));
   }
 
   /**

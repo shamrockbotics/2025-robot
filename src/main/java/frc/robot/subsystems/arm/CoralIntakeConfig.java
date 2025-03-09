@@ -2,12 +2,12 @@ package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.util.Units;
 
-public class ClimberConfig extends ArmConfig {
-  public ClimberConfig() {
+public class CoralIntakeConfig extends ArmConfig {
+  public CoralIntakeConfig() {
     this(true);
   }
 
-  public ClimberConfig(boolean real) {
+  public CoralIntakeConfig(boolean real) {
     name = "Algae Intake";
     minAngleRads = 0;
     maxAngleRads = 2;
