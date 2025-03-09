@@ -36,23 +36,23 @@ public class DriveConstants {
 
   // Zeroed rotation values for each module, see setup instructions
   // position with the drive gear facing the right side of the robot
-  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(-2.548);
-  public static final Rotation2d frontRightZeroRotation = new Rotation2d(-.543);
-  public static final Rotation2d backLeftZeroRotation = new Rotation2d(2.821);
-  public static final Rotation2d backRightZeroRotation = new Rotation2d(-3);
+  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0.0);
+  public static final Rotation2d frontRightZeroRotation = new Rotation2d(0.0);
+  public static final Rotation2d backLeftZeroRotation = new Rotation2d(0.0);
+  public static final Rotation2d backRightZeroRotation = new Rotation2d(0.0);
 
   // Device CAN IDs
   public static final int pigeonCanId = 0;
 
-  public static final int frontLeftDriveCanId = 7;
-  public static final int backLeftDriveCanId = 4;
-  public static final int frontRightDriveCanId = 5;
-  public static final int backRightDriveCanId = 1;
+  public static final int frontLeftDriveCanId = 1;
+  public static final int backLeftDriveCanId = 5;
+  public static final int frontRightDriveCanId = 3;
+  public static final int backRightDriveCanId = 7;
 
-  public static final int frontLeftTurnCanId = 8;
-  public static final int backLeftTurnCanId = 3;
-  public static final int frontRightTurnCanId = 6;
-  public static final int backRightTurnCanId = 2;
+  public static final int frontLeftTurnCanId = 2;
+  public static final int backLeftTurnCanId = 6;
+  public static final int frontRightTurnCanId = 4;
+  public static final int backRightTurnCanId = 8;
 
   // Drive motor configuration
   public static final int driveMotorCurrentLimit = 50;
