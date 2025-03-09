@@ -213,7 +213,7 @@ public class RobotContainer {
     coralElbow.setDefaultCommand(
         Commands.run(
             () -> {
-              coralElbow.hold();
+              coralElbow.stop();
             },
             coralElbow));
     coralWrist.setDefaultCommand(
@@ -265,18 +265,18 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  coralIntake.run(1);
+                  coralWrist.run(0.1);
                 },
-                coralIntake));
+                coralWrist));
     // Arbitrary values but compresses climber to hang on to cage.
     operatorController
         .leftTrigger()
         .whileTrue(
             Commands.run(
                 () -> {
-                  climber.runToAngle(-1.2);
+                  coralWrist.run(-0.1);
                 },
-                climber));
+                coralWrist));
   }
 
   private void configureVisualization() {

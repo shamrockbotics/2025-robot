@@ -26,6 +26,7 @@ public class ArmIOSpark implements ArmIO {
 
   // Closed loop controllers
   private final SparkClosedLoopController controller;
+  private double setpoint = 0.0;
 
   // Connection debouncers
   private final Debouncer connectedDebounce = new Debouncer(0.5);
@@ -123,19 +124,25 @@ public class ArmIOSpark implements ArmIO {
   public void updateInputs(ArmIOInputs inputs) {
     // Update inputs
     sparkStickyFault = false;
-    ifOk(spark, encoder::getPosition, (value) -> inputs.currentAngleRads = value);
+    ifOk(
+        spark,
+        encoder::getPosition,
+        (value) ->
+            inputs.currentAngleRads =
+                MathUtil.inputModulus(value - zeroOffsetRads, -Math.PI, Math.PI));
     ifOk(spark, encoder::getVelocity, (value) -> inputs.velocityRadsPerSec = value);
     ifOk(
         spark,
         new DoubleSupplier[] {spark::getAppliedOutput, spark::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(spark, spark::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    inputs.targetAngleRads = MathUtil.inputModulus(setpoint - zeroOffsetRads, -Math.PI, Math.PI);
     inputs.connected = connectedDebounce.calculate(!sparkStickyFault);
   }
 
   @Override
   public void setPosition(double angleRads) {
-    double setpoint = MathUtil.inputModulus(angleRads + zeroOffsetRads, 0, 2 * Math.PI);
+    setpoint = MathUtil.inputModulus(angleRads + zeroOffsetRads, 0, 2 * Math.PI);
     controller.setReference(setpoint, ControlType.kPosition);
   }
 
