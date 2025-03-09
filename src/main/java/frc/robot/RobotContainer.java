@@ -46,8 +46,6 @@ public class RobotContainer {
   private final Arm coralElbow;
   private final Arm coralWrist;
   private final Elevator elevator;
-  private final Arm coralElbow;
-  private final Arm coralWrist;
   private final Arm coralIntake;
   private final Arm algaeIntake;
   private final Arm climber;
@@ -80,8 +78,6 @@ public class RobotContainer {
         coralElbow = new Arm(new CoralIntakeElbowConfig());
         coralWrist = new Arm(new CoralIntakeWristConfig());
         elevator = new Elevator(new ElevatorSpecificConfig());
-        coralElbow = new Arm(new CoralIntakeElbowConfig());
-        coralWrist = new Arm(new CoralIntakeWristConfig());
         coralIntake = new Arm(new CoralIntakeConfig());
         algaeIntake = new Arm(new AlgaeIntakeConfig());
         climber = new Arm(new ClimberConfig());
@@ -104,8 +100,6 @@ public class RobotContainer {
         coralElbow = new Arm(new CoralIntakeElbowConfig(false));
         coralWrist = new Arm(new CoralIntakeWristConfig(false));
         elevator = new Elevator(new ElevatorSpecificConfig(false));
-        coralElbow = new Arm(new CoralIntakeElbowConfig(false));
-        coralWrist = new Arm(new CoralIntakeWristConfig(false));
         coralIntake = new Arm(new CoralIntakeConfig(false));
         algaeIntake = new Arm(new AlgaeIntakeConfig(false));
         climber = new Arm(new ClimberConfig(false));
@@ -124,8 +118,6 @@ public class RobotContainer {
         coralElbow = new Arm(new ArmConfig() {});
         coralWrist = new Arm(new ArmConfig() {});
         elevator = new Elevator(new ElevatorConfig() {});
-        coralElbow = new Arm(new CoralIntakeElbowConfig() {});
-        coralWrist = new Arm(new CoralIntakeWristConfig() {});
         coralIntake = new Arm(new CoralIntakeConfig() {});
         algaeIntake = new Arm(new AlgaeIntakeConfig() {});
         climber = new Arm(new ClimberConfig() {});
