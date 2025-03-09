@@ -10,7 +10,11 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-
+// Need to implement this somewhere public static final double turnEncoderPositionFactor = 2 *
+// Math.PI / turnMotorReduction; // Rotor Rotations -> Wheel Radians
+// public static final double turnEncoderVelocityFactor = (2 * Math.PI) / 60.0 / turnMotorReduction;
+// // Rotor RPM -> Wheel Rad/Sec
+// tryUntilOk(turnSpark, 5, () -> turnEncoder.setPosition(customEncoder.getPositionRadians()));
 package frc.robot.subsystems.drive;
 
 import static frc.robot.subsystems.drive.DriveConstants.*;
@@ -144,12 +148,13 @@ public class ModuleIOSpark implements ModuleIO {
         .positionConversionFactor(turnEncoderPositionFactor)
         .velocityConversionFactor(turnEncoderVelocityFactor)
         .averageDepth(2);
+
     turnConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
         .positionWrappingEnabled(true)
         .positionWrappingInputRange(turnPIDMinInput, turnPIDMaxInput)
-        .pidf(turnKp, 0.0, turnKd, 0.0);
+        .pidf(turnKp, .0, turnKd, 0.0);
     turnConfig
         .signals
         .absoluteEncoderPositionAlwaysOn(true)
