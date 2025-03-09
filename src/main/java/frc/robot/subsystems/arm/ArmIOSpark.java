@@ -39,8 +39,8 @@ public class ArmIOSpark implements ArmIO {
       double encoderPositionFactor,
       double encoderVelocityFactor,
       int currentLimit,
-      double turnKp,
-      double turnKd) {
+      double positionKp,
+      double positionKd) {
     this(
         id1,
         zeroOffsetRads,
@@ -49,8 +49,8 @@ public class ArmIOSpark implements ArmIO {
         encoderPositionFactor,
         encoderVelocityFactor,
         currentLimit,
-        turnKp,
-        turnKd);
+        positionKp,
+        positionKd);
     SparkBase followerSpark = new SparkMax(id2, MotorType.kBrushless);
     SparkMaxConfig followerSparkConfig = new SparkMaxConfig();
     followerSparkConfig
@@ -77,8 +77,8 @@ public class ArmIOSpark implements ArmIO {
       double encoderPositionFactor,
       double encoderVelocityFactor,
       int currentLimit,
-      double turnKp,
-      double turnKd) {
+      double positionKp,
+      double positionKd) {
     this.zeroOffsetRads = zeroOffsetRads;
     spark = new SparkMax(id, MotorType.kBrushless);
     encoder = spark.getAbsoluteEncoder();
@@ -101,7 +101,7 @@ public class ArmIOSpark implements ArmIO {
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
         .positionWrappingEnabled(true)
         .positionWrappingInputRange(0, 2 * Math.PI)
-        .pidf(turnKp, 0.0, turnKd, 0.0);
+        .pidf(positionKp, 0.0, positionKd, 0.0);
     sparkConfig
         .signals
         .absoluteEncoderPositionAlwaysOn(true)

@@ -38,8 +38,8 @@ public class ArmIOSparkRIO implements ArmIO {
       double encoderPositionFactor,
       double encoderVelocityFactor,
       int currentLimit,
-      double turnKp,
-      double turnKd) {
+      double positionKp,
+      double positionKd) {
     this(
         id1,
         encoderPort,
@@ -49,8 +49,8 @@ public class ArmIOSparkRIO implements ArmIO {
         encoderPositionFactor,
         encoderVelocityFactor,
         currentLimit,
-        turnKp,
-        turnKd);
+        positionKp,
+        positionKd);
     SparkBase followerSpark = new SparkMax(id2, MotorType.kBrushless);
     SparkMaxConfig followerSparkConfig = new SparkMaxConfig();
     followerSparkConfig
