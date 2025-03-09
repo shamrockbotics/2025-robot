@@ -12,9 +12,9 @@ public class Elevator extends SubsystemBase {
   private final ElevatorIO io;
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
-  private final double minAngleRads;
-  private final double maxAngleRads;
-  private final double allowedErrorRads;
+  private final double minHeightMeters;
+  private final double maxHeightMeters;
+  private final double allowedErrorMeters;
   private final Alert disconnectedAlert;
 
   private double lastRunAngle = 0.0;
@@ -26,9 +26,9 @@ public class Elevator extends SubsystemBase {
     setName(config.name);
     io = config.io;
 
-    minAngleRads = config.minAngleRads;
-    maxAngleRads = config.maxAngleRads;
-    allowedErrorRads = config.allowedErrorRads;
+    minHeightMeters = config.minHeightMeters;
+    maxHeightMeters = config.maxHeightMeters;
+    allowedErrorMeters = config.allowedErrorMeters;
 
     disconnectedAlert = new Alert(getName() + " disconnected.", AlertType.kError);
 
@@ -40,7 +40,7 @@ public class Elevator extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs(this.getName(), inputs);
 
-    visualization.setLength(getLength());
+    visualization.setLength(getHeight());
 
     disconnectedAlert.set(!inputs.connected);
   }
@@ -48,11 +48,11 @@ public class Elevator extends SubsystemBase {
   /**
    * Runs the arm to the desired angle.
    *
-   * @param angleRads Angle in radians
+   * @param HeightMeters Angle in radians
    */
   public void runToHeight(double height) {
     io.setPosition(height);
-    lastRunAngle = getAngle();
+    lastRunAngle = getHeight();
   }
 
   /**
@@ -70,20 +70,20 @@ public class Elevator extends SubsystemBase {
    * @param value Output value, -1 to +1, + output moves in direction of + angle
    */
   public void run(double value) {
-    if (value < 0.0 && getAngle() <= minAngleRads) {
+    if (value < 0.0 && getHeight() <= minHeightMeters) {
       io.setOutput(0.0);
-    } else if (value > 0.0 && getAngle() >= maxAngleRads) {
+    } else if (value > 0.0 && getHeight() >= maxHeightMeters) {
       io.setOutput(0.0);
     } else {
       io.setOutput(value);
     }
-    lastRunAngle = getAngle();
+    lastRunAngle = getHeight();
   }
 
   /** Disables all outputs to motors. */
   public void stop() {
     io.setOutput(0.0);
-    lastRunAngle = getAngle();
+    lastRunAngle = getHeight();
   }
 
   /** Holds the arm at the last run angle. */
@@ -92,16 +92,12 @@ public class Elevator extends SubsystemBase {
   }
 
   /** Returns the current angle of the arm in radians. */
-  public double getAngle() {
-    return inputs.currentAngleRads;
-  }
-
-  public double getLength() {
-    return inputs.currentHeight;
+  public double getHeight() {
+    return inputs.currentHeightMeters;
   }
 
   /** Returns true if the arm angle is within the allowed error of the target angle. */
   public boolean onTarget() {
-    return (Math.abs(inputs.currentAngleRads - inputs.targetAngleRads) <= allowedErrorRads);
+    return (Math.abs(inputs.currentHeightMeters - inputs.targetHeightMeters) <= allowedErrorMeters);
   }
 }

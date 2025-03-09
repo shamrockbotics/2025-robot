@@ -30,6 +30,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.arm.*;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.*;
+import frc.robot.subsystems.roller.*;
 import frc.robot.subsystems.vision.*;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -46,8 +47,8 @@ public class RobotContainer {
   private final Arm coralElbow;
   private final Arm coralWrist;
   private final Elevator elevator;
-  private final Arm coralIntake;
-  private final Arm algaeIntake;
+  private final Roller coralIntake;
+  private final Roller algaeIntake;
   private final Arm climber;
 
   // Controller
@@ -75,11 +76,11 @@ public class RobotContainer {
                 new VisionIOPhotonVision(camera0Name, robotToCamera0),
                 new VisionIOPhotonVision(camera1Name, robotToCamera1),
                 new VisionIOPhotonVision(camera2Name, robotToCamera2));
-        coralElbow = new Arm(new CoralIntakeElbowConfig());
-        coralWrist = new Arm(new CoralIntakeWristConfig());
+        coralElbow = new Arm(new CoralElbowConfig());
+        coralWrist = new Arm(new CoralWristConfig());
         elevator = new Elevator(new ElevatorSpecificConfig());
-        coralIntake = new Arm(new CoralIntakeConfig());
-        algaeIntake = new Arm(new AlgaeIntakeConfig());
+        coralIntake = new Roller(new CoralIntakeConfig());
+        algaeIntake = new Roller(new AlgaeIntakeConfig());
         climber = new Arm(new ClimberConfig());
         break;
 
@@ -97,11 +98,11 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
-        coralElbow = new Arm(new CoralIntakeElbowConfig(false));
-        coralWrist = new Arm(new CoralIntakeWristConfig(false));
+        coralElbow = new Arm(new CoralElbowConfig(false));
+        coralWrist = new Arm(new CoralWristConfig(false));
         elevator = new Elevator(new ElevatorSpecificConfig(false));
-        coralIntake = new Arm(new CoralIntakeConfig(false));
-        algaeIntake = new Arm(new AlgaeIntakeConfig(false));
+        coralIntake = new Roller(new CoralIntakeConfig(false));
+        algaeIntake = new Roller(new AlgaeIntakeConfig(false));
         climber = new Arm(new ClimberConfig(false));
         break;
 
@@ -118,8 +119,8 @@ public class RobotContainer {
         coralElbow = new Arm(new ArmConfig() {});
         coralWrist = new Arm(new ArmConfig() {});
         elevator = new Elevator(new ElevatorConfig() {});
-        coralIntake = new Arm(new CoralIntakeConfig() {});
-        algaeIntake = new Arm(new AlgaeIntakeConfig() {});
+        coralIntake = new Roller(new CoralIntakeConfig() {});
+        algaeIntake = new Roller(new AlgaeIntakeConfig() {});
         climber = new Arm(new ClimberConfig() {});
         break;
     }

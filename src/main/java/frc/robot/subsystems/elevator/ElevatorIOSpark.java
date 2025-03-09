@@ -18,7 +18,7 @@ import edu.wpi.first.math.filter.Debouncer;
 import java.util.function.DoubleSupplier;
 
 public class ElevatorIOSpark implements ElevatorIO {
-  private final double zeroOffsetRads;
+  private final double zeroOffsetMeters;
 
   // Hardware objects
   private final SparkBase spark;
@@ -33,7 +33,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   public ElevatorIOSpark(
       int id1,
       int id2,
-      double zeroOffsetRads,
+      double zeroOffsetMeters,
       boolean motorInverted,
       boolean encoderInverted,
       double encoderPositionFactor,
@@ -43,7 +43,7 @@ public class ElevatorIOSpark implements ElevatorIO {
       double turnKd) {
     this(
         id1,
-        zeroOffsetRads,
+        zeroOffsetMeters,
         motorInverted,
         encoderInverted,
         encoderPositionFactor,
@@ -71,7 +71,7 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   public ElevatorIOSpark(
       int id,
-      double zeroOffsetRads,
+      double zeroOffsetMeters,
       boolean motorInverted,
       boolean encoderInverted,
       double encoderPositionFactor,
@@ -79,7 +79,7 @@ public class ElevatorIOSpark implements ElevatorIO {
       int currentLimit,
       double turnKp,
       double turnKd) {
-    this.zeroOffsetRads = zeroOffsetRads;
+    this.zeroOffsetMeters = zeroOffsetMeters;
     spark = new SparkMax(id, MotorType.kBrushless);
     encoder = spark.getAbsoluteEncoder();
     controller = spark.getClosedLoopController();
@@ -123,8 +123,8 @@ public class ElevatorIOSpark implements ElevatorIO {
   public void updateInputs(ElevatorIOInputs inputs) {
     // Update inputs
     sparkStickyFault = false;
-    ifOk(spark, encoder::getPosition, (value) -> inputs.currentAngleRads = value);
-    ifOk(spark, encoder::getVelocity, (value) -> inputs.velocityRadsPerSec = value);
+    ifOk(spark, encoder::getPosition, (value) -> inputs.currentHeightMeters = value);
+    ifOk(spark, encoder::getVelocity, (value) -> inputs.velocityMetersPerSec = value);
     ifOk(
         spark,
         new DoubleSupplier[] {spark::getAppliedOutput, spark::getBusVoltage},
@@ -135,8 +135,8 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   @Override
   public void setPosition(double height) {
-    double angleRads = height / .049;
-    double setpoint = MathUtil.inputModulus(angleRads + zeroOffsetRads, 0, 2 * Math.PI);
+    double HeightMeters = height / .049;
+    double setpoint = MathUtil.inputModulus(HeightMeters + zeroOffsetMeters, 0, 2 * Math.PI);
     controller.setReference(setpoint, ControlType.kPosition);
   }
 

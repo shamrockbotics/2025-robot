@@ -1,63 +1,60 @@
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.roller;
 
 import static frc.robot.util.SparkUtil.*;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.controller.PIDController;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import java.util.function.DoubleSupplier;
 
-public class ElevatorIOSparkRIO implements ElevatorIO {
-  private final double zeroOffsetMeters;
+public class RollerIOSparkFlex implements RollerIO {
 
   // Hardware objects
   private final SparkBase spark;
-  private final DutyCycleEncoder encoder;
+  private final AbsoluteEncoder encoder;
 
   // Closed loop controllers
-  private final PIDController controller;
-  private double setpoint = 0.0;
+  private final SparkClosedLoopController controller;
 
   // Connection debouncers
   private final Debouncer connectedDebounce = new Debouncer(0.5);
 
-  public ElevatorIOSparkRIO(
+  public RollerIOSparkFlex(
       int id1,
       int id2,
-      int encoderPort,
-      double zeroOffsetMeters,
       boolean motorInverted,
       boolean encoderInverted,
       double encoderPositionFactor,
       double encoderVelocityFactor,
       int currentLimit,
-      double turnKp,
-      double turnKd) {
+      double velocityKp,
+      double velocityKd) {
     this(
         id1,
-        encoderPort,
-        zeroOffsetMeters,
         motorInverted,
         encoderInverted,
         encoderPositionFactor,
         encoderVelocityFactor,
         currentLimit,
-        turnKp,
-        turnKd);
-    SparkBase followerSpark = new SparkMax(id2, MotorType.kBrushless);
-    SparkMaxConfig followerSparkConfig = new SparkMaxConfig();
+        velocityKp,
+        velocityKd);
+    SparkBase followerSpark = new SparkFlex(id2, MotorType.kBrushless);
+    SparkFlexConfig followerSparkConfig = new SparkFlexConfig();
     followerSparkConfig
+        .inverted(!motorInverted)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(currentLimit)
         .voltageCompensation(maxVoltage)
-        .follow(spark, true);
+        .follow(spark);
     tryUntilOk(
         followerSpark,
         5,
@@ -66,26 +63,22 @@ public class ElevatorIOSparkRIO implements ElevatorIO {
                 followerSparkConfig,
                 ResetMode.kResetSafeParameters,
                 PersistMode.kPersistParameters));
-    encoder.setInverted(encoderInverted);
   }
 
-  public ElevatorIOSparkRIO(
+  public RollerIOSparkFlex(
       int id,
-      int encoderPort,
-      double zeroOffsetMeters,
       boolean motorInverted,
       boolean encoderInverted,
       double encoderPositionFactor,
       double encoderVelocityFactor,
       int currentLimit,
-      double kp,
-      double kd) {
-    this.zeroOffsetMeters = zeroOffsetMeters;
-    spark = new SparkMax(id, MotorType.kBrushless);
-    encoder = new DutyCycleEncoder(encoderPort);
-    controller = new PIDController(kp, 0.0, kd);
+      double velocityKp,
+      double velocityKd) {
+    spark = new SparkFlex(id, MotorType.kBrushless);
+    encoder = spark.getAbsoluteEncoder();
+    controller = spark.getClosedLoopController();
 
-    SparkMaxConfig sparkConfig = new SparkMaxConfig();
+    SparkFlexConfig sparkConfig = new SparkFlexConfig();
     sparkConfig
         .inverted(motorInverted)
         .idleMode(IdleMode.kBrake)
@@ -97,6 +90,21 @@ public class ElevatorIOSparkRIO implements ElevatorIO {
         .positionConversionFactor(encoderPositionFactor)
         .velocityConversionFactor(encoderVelocityFactor)
         .averageDepth(2);
+    sparkConfig
+        .closedLoop
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+        .positionWrappingEnabled(true)
+        .positionWrappingInputRange(0, 2 * Math.PI)
+        .pidf(velocityKp, 0.0, velocityKd, 0.0);
+    sparkConfig
+        .signals
+        .absoluteEncoderPositionAlwaysOn(true)
+        .absoluteEncoderPositionPeriodMs(20)
+        .absoluteEncoderVelocityAlwaysOn(true)
+        .absoluteEncoderVelocityPeriodMs(20)
+        .appliedOutputPeriodMs(20)
+        .busVoltagePeriodMs(20)
+        .outputCurrentPeriodMs(20);
     tryUntilOk(
         spark,
         5,
@@ -106,34 +114,25 @@ public class ElevatorIOSparkRIO implements ElevatorIO {
   }
 
   @Override
-  public void updateInputs(ElevatorIOInputs inputs) {
+  public void updateInputs(RollerIOInputs inputs) {
     // Update inputs
     sparkStickyFault = false;
-    inputs.currentHeightMeters = getHeight();
-    inputs.targetHeightMeters = setpoint;
-    inputs.velocityMetersPerSec = 0.0; // figure out velocity later
+    ifOk(spark, encoder::getVelocity, (value) -> inputs.velocityMetersPerSec = value);
     ifOk(
         spark,
         new DoubleSupplier[] {spark::getAppliedOutput, spark::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(spark, spark::getOutputCurrent, (value) -> inputs.currentAmps = value);
-    inputs.connected = connectedDebounce.calculate(!sparkStickyFault && encoder.isConnected());
+    inputs.connected = connectedDebounce.calculate(!sparkStickyFault);
   }
 
   @Override
-  public void setPosition(double HeightMeters) {
-    setpoint = HeightMeters;
-    double output = controller.calculate(getHeight(), setpoint);
-    output = Math.min(0.2, Math.max(-0.2, output));
-    setOutput(output);
+  public void setVelocity(double metersPerSec) {
+    controller.setReference(metersPerSec, ControlType.kVelocity);
   }
 
   @Override
   public void setOutput(double value) {
     spark.setVoltage(value * maxVoltage);
-  }
-
-  private double getHeight() {
-    return encoder.get() * 2 * Math.PI - zeroOffsetMeters;
   }
 }
