@@ -2,7 +2,6 @@ package frc.robot.subsystems.arm;
 
 import static frc.robot.util.SparkUtil.*;
 
-import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -18,7 +17,7 @@ public class ArmIOSparkRIO implements ArmIO {
   private final double zeroOffsetRads;
 
   // Hardware objects
-  private final SparkBase spark;
+  private final SparkMax spark;
   private final DutyCycleEncoder encoder;
 
   // Closed loop controllers
@@ -51,7 +50,7 @@ public class ArmIOSparkRIO implements ArmIO {
         currentLimit,
         positionKp,
         positionKd);
-    SparkBase followerSpark = new SparkMax(id2, MotorType.kBrushless);
+    SparkMax followerSpark = new SparkMax(id2, MotorType.kBrushless);
     SparkMaxConfig followerSparkConfig = new SparkMaxConfig();
     followerSparkConfig
         .idleMode(IdleMode.kBrake)

@@ -3,7 +3,6 @@ package frc.robot.subsystems.elevator;
 import static frc.robot.util.SparkUtil.*;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -20,7 +19,7 @@ public class ElevatorIOSpark implements ElevatorIO {
   private final double zeroOffsetMeters;
 
   // Hardware objects
-  private final SparkBase spark;
+  private final SparkMax spark;
   private final RelativeEncoder encoder;
 
   // Closed loop controllers
@@ -50,7 +49,7 @@ public class ElevatorIOSpark implements ElevatorIO {
         currentLimit,
         positionKp,
         positionKd);
-    SparkBase followerSpark = new SparkMax(id2, MotorType.kBrushless);
+    SparkMax followerSpark = new SparkMax(id2, MotorType.kBrushless);
     SparkMaxConfig followerSparkConfig = new SparkMaxConfig();
     followerSparkConfig
         .idleMode(IdleMode.kBrake)
@@ -79,7 +78,7 @@ public class ElevatorIOSpark implements ElevatorIO {
       double positionKd) {
     this.zeroOffsetMeters = zeroOffsetMeters;
     spark = new SparkMax(id, MotorType.kBrushless);
-    encoder = spark.getEncoder();
+    encoder = spark.getAlternateEncoder();
     controller = spark.getClosedLoopController();
 
     SparkMaxConfig sparkConfig = new SparkMaxConfig();

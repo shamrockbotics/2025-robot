@@ -3,7 +3,6 @@ package frc.robot.subsystems.roller;
 import static frc.robot.util.SparkUtil.*;
 
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -19,7 +18,7 @@ import java.util.function.DoubleSupplier;
 public class RollerIOSparkFlex implements RollerIO {
 
   // Hardware objects
-  private final SparkBase spark;
+  private final SparkFlex spark;
   private final AbsoluteEncoder encoder;
 
   // Closed loop controllers
@@ -47,7 +46,7 @@ public class RollerIOSparkFlex implements RollerIO {
         currentLimit,
         velocityKp,
         velocityKd);
-    SparkBase followerSpark = new SparkFlex(id2, MotorType.kBrushless);
+    SparkFlex followerSpark = new SparkFlex(id2, MotorType.kBrushless);
     SparkFlexConfig followerSparkConfig = new SparkFlexConfig();
     followerSparkConfig
         .inverted(!motorInverted)
