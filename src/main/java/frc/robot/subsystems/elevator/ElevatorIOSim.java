@@ -69,17 +69,16 @@ public class ElevatorIOSim implements ElevatorIO {
 
     inputs.connected = true;
     inputs.targetHeightMeters = controller.getSetpoint();
-    inputs.currentHeightMeters = encoder.getDistance() / .049;
-    inputs.velocityMetersPerSec = armSim.getVelocityRadPerSec() / .049;
+    inputs.currentHeightMeters = encoder.getDistance();
+    inputs.velocityMetersPerSec = armSim.getVelocityRadPerSec();
     inputs.appliedVolts = appliedVolts;
     inputs.currentAmps = armSim.getCurrentDrawAmps();
   }
 
   @Override
   public void setPosition(double height) {
-    double angleRads = height / .049;
     closedLoop = true;
-    controller.setSetpoint(angleRads);
+    controller.setSetpoint(height);
   }
 
   @Override

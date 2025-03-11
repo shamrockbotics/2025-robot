@@ -16,7 +16,6 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -169,7 +168,6 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
-    // do we need to add a -> -controller.ger.RightY()
 
     // Lock to 0° when A button is held
     controller
@@ -195,25 +193,6 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // Auto aim command example
-    @SuppressWarnings("resource")
-    PIDController aimController = new PIDController(0.2, 0.0, 0.0);
-    aimController.enableContinuousInput(-Math.PI, Math.PI);
-    controller
-        .y()
-        .whileTrue(
-            Commands.runOnce(
-                    () -> {
-                      aimController.reset();
-                    },
-                    drive)
-                .andThen(
-                    DriveCommands.joystickDrive(
-                        drive,
-                        () -> 0.0,
-                        () -> 0.0,
-                        () -> aimController.calculate(vision.getTargetX(0).getRadians()))));
-
     // Default arm command, hold in position
     coralElbow.setDefaultCommand(
         Commands.run(
@@ -233,56 +212,42 @@ public class RobotContainer {
               algaeArm.hold();
             },
             algaeArm));
+    elevator.setDefaultCommand(
+        Commands.run(
+            () -> {
+              elevator.hold();
+            },
+            elevator));
 
     operatorController
         .a()
         .whileTrue(
             Commands.run(
                 () -> {
-                  elevator.runToHeight(1);
-                  coralElbow.runToAngle(1.2);
-                  coralWrist.runToAngle(1.2);
-                  algaeArm.runToAngle(1.2);
-                }));
-    // Arbitrary values again but lowers elevator and coral wrist into the robot.
+                  elevator.run(0.1);
+                },
+                elevator));
+
     operatorController
         .b()
         .whileTrue(
             Commands.run(
                 () -> {
-                  elevator.runToHeight(0);
-                  coralElbow.runToAngle(0);
-                }));
+                  elevator.run(-0.1);
+                },
+                elevator));
 
     operatorController
         .x()
         .whileTrue(
             Commands.run(
                 () -> {
-                  coralElbow.runToAngle(1.4);
-                },
-                coralElbow));
-
-    operatorController
-        .y()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  coralElbow.runToAngle(0);
-                },
-                coralElbow));
-    // Coral intake running when right trigger pressed
-    operatorController
-        .rightTrigger()
-        .whileTrue(
-            Commands.run(
-                () -> {
                   algaeArm.run(0.1);
                 },
                 algaeArm));
-    // Arbitrary values but compresses climber to hang on to cage.
+
     operatorController
-        .leftTrigger()
+        .y()
         .whileTrue(
             Commands.run(
                 () -> {
@@ -292,28 +257,27 @@ public class RobotContainer {
   }
 
   private void configureVisualization() {
-    Mechanism2d jellybeanView = new Mechanism2d(60, 60);
-    Mechanism2d elevatorView = new Mechanism2d(60, 60);
+    Mechanism2d sideView = new Mechanism2d(2, 2);
 
-    MechanismRoot2d elevatorRoot = elevatorView.getRoot("Elevator Root", 30, 0);
-    MechanismLigament2d elevatorHolder = new MechanismLigament2d("Elevator Holder", 10, 0);
+    MechanismRoot2d elevatorRoot = sideView.getRoot("Elevator Root", 1.2, 0);
 
-    MechanismRoot2d armRoot = jellybeanView.getRoot("Arm Root", 30, 20);
-    MechanismLigament2d armHolder = new MechanismLigament2d("Arm Holder", 20, 90);
     elevator.visualization.setAngle(90);
     elevatorRoot.append(elevator.visualization);
 
-    coralElbow.visualization.setLength(10);
+    coralElbow.visualization.setLength(.2);
     elevator.visualization.append(coralElbow.visualization);
 
-    coralWrist.visualization.setLength(10);
+    coralWrist.visualization.setLength(.2);
     coralElbow.visualization.append(coralWrist.visualization);
 
-    algaeArm.visualization.setLength(10);
-    algaeArm.visualization.append(algaeArm.visualization);
+    MechanismRoot2d algaeRoot = sideView.getRoot("Algae Root", 0.8, 0);
 
-    SmartDashboard.putData("Jellybean", jellybeanView);
-    SmartDashboard.putData("Elevator", elevatorView);
+    algaeArm.visualization.setLength(.2);
+    algaeArm.visualizationAngleOffset = () -> 90;
+    algaeArm.visualizationReversed = true;
+    algaeRoot.append(algaeArm.visualization);
+
+    SmartDashboard.putData("Side View", sideView);
   }
 
   /**

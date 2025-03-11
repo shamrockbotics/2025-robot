@@ -9,8 +9,8 @@ public class AlgaeArmConfig extends ArmConfig {
 
   public AlgaeArmConfig(boolean real) {
     name = "Algae Arm";
-    minAngleRads = 0;
-    maxAngleRads = 2;
+    minAngleRads = -2.0;
+    maxAngleRads = 0.5;
     allowedErrorRads = Units.degreesToRadians(2);
     if (real) {
       io = new ArmIOSpark(15, 3.08, false, true, 2 * Math.PI, 2 * Math.PI / 60, 40, 0.5, 0.0);

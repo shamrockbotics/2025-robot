@@ -17,7 +17,7 @@ public class RollerIOSim implements RollerIO {
 
   public RollerIOSim(double gearReduction, double radsPerPulse) {
     motorSim =
-        new DCMotorSim(LinearSystemId.createDCMotorSystem(gearbox, 0, gearReduction), gearbox);
+        new DCMotorSim(LinearSystemId.createDCMotorSystem(gearbox, 1, gearReduction), gearbox);
   }
 
   @Override

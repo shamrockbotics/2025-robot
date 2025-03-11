@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
@@ -18,10 +19,12 @@ public class Arm extends SubsystemBase {
   private final double allowedErrorRads;
   private final Alert disconnectedAlert;
 
+  private boolean holding = false;
   private double lastRunAngle = 0.0;
 
   public MechanismLigament2d visualization;
   public DoubleSupplier visualizationAngleOffset = () -> 0.0;
+  public boolean visualizationReversed = false;
 
   public Arm(ArmConfig config) {
     setName(config.name);
@@ -41,8 +44,14 @@ public class Arm extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs(this.getName(), inputs);
 
-    visualization.setAngle(
-        Units.radiansToDegrees(getAngle()) - visualizationAngleOffset.getAsDouble());
+    if (!holding || DriverStation.isDisabled()) {
+      lastRunAngle = getAngle();
+    }
+
+    double visualizationAngle =
+        Units.radiansToDegrees(getAngle()) + visualizationAngleOffset.getAsDouble();
+    if (visualizationReversed) visualizationAngle = 180 - visualizationAngle;
+    visualization.setAngle(visualizationAngle);
 
     disconnectedAlert.set(!inputs.connected);
   }
@@ -53,8 +62,8 @@ public class Arm extends SubsystemBase {
    * @param angleRads Angle in radians
    */
   public void runToAngle(double angleRads) {
+    holding = false;
     io.setPosition(MathUtil.clamp(angleRads, minAngleRads, maxAngleRads));
-    lastRunAngle = getAngle();
   }
 
   /**
@@ -72,6 +81,7 @@ public class Arm extends SubsystemBase {
    * @param value Output value, -1 to +1, + output moves in direction of + angle
    */
   public void run(double value) {
+    holding = false;
     if (value < 0.0 && getAngle() <= minAngleRads) {
       io.setOutput(0.0);
     } else if (value > 0.0 && getAngle() >= maxAngleRads) {
@@ -79,17 +89,17 @@ public class Arm extends SubsystemBase {
     } else {
       io.setOutput(value);
     }
-    lastRunAngle = getAngle();
   }
 
   /** Disables all outputs to motors. */
   public void stop() {
+    holding = false;
     io.setOutput(0.0);
-    lastRunAngle = getAngle();
   }
 
   /** Holds the arm at the last run angle. */
   public void hold() {
+    holding = true;
     io.setPosition(lastRunAngle);
   }
 
