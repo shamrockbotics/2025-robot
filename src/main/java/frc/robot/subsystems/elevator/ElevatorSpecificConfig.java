@@ -12,7 +12,7 @@ public class ElevatorSpecificConfig extends ElevatorConfig {
     allowedErrorMeters = 0.02;
     if (real) {
       io =
-          new ElevatorIOSpark(
+          new ElevatorIOSparkMax(
               10,
               9,
               0.0,
