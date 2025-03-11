@@ -2,7 +2,7 @@ package frc.robot.subsystems.elevator;
 
 import static frc.robot.util.SparkUtil.*;
 
-import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -13,7 +13,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import java.util.function.DoubleSupplier;
 
@@ -22,7 +21,7 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   // Hardware objects
   private final SparkBase spark;
-  private final AbsoluteEncoder encoder;
+  private final RelativeEncoder encoder;
 
   // Closed loop controllers
   private final SparkClosedLoopController controller;
@@ -54,11 +53,10 @@ public class ElevatorIOSpark implements ElevatorIO {
     SparkBase followerSpark = new SparkMax(id2, MotorType.kBrushless);
     SparkMaxConfig followerSparkConfig = new SparkMaxConfig();
     followerSparkConfig
-        .inverted(!motorInverted)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(currentLimit)
         .voltageCompensation(maxVoltage)
-        .follow(spark);
+        .follow(spark, true);
     tryUntilOk(
         followerSpark,
         5,
@@ -81,7 +79,7 @@ public class ElevatorIOSpark implements ElevatorIO {
       double positionKd) {
     this.zeroOffsetMeters = zeroOffsetMeters;
     spark = new SparkMax(id, MotorType.kBrushless);
-    encoder = spark.getAbsoluteEncoder();
+    encoder = spark.getEncoder();
     controller = spark.getClosedLoopController();
 
     SparkMaxConfig sparkConfig = new SparkMaxConfig();
@@ -91,16 +89,16 @@ public class ElevatorIOSpark implements ElevatorIO {
         .smartCurrentLimit(currentLimit)
         .voltageCompensation(maxVoltage);
     sparkConfig
-        .absoluteEncoder
+        .alternateEncoder
         .inverted(encoderInverted)
         .positionConversionFactor(encoderPositionFactor)
         .velocityConversionFactor(encoderVelocityFactor)
-        .averageDepth(2);
+        .averageDepth(2)
+        .countsPerRevolution(8192)
+        .setSparkMaxDataPortConfig();
     sparkConfig
         .closedLoop
-        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-        .positionWrappingEnabled(true)
-        .positionWrappingInputRange(0, 2 * Math.PI)
+        .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
         .pidf(positionKp, 0.0, positionKd, 0.0);
     sparkConfig
         .signals
@@ -135,8 +133,7 @@ public class ElevatorIOSpark implements ElevatorIO {
 
   @Override
   public void setPosition(double height) {
-    double HeightMeters = height / .049;
-    double setpoint = MathUtil.inputModulus(HeightMeters + zeroOffsetMeters, 0, 2 * Math.PI);
+    double setpoint = height + zeroOffsetMeters;
     controller.setReference(setpoint, ControlType.kPosition);
   }
 

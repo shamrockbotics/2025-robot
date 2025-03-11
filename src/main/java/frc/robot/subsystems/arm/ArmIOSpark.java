@@ -55,11 +55,10 @@ public class ArmIOSpark implements ArmIO {
     SparkBase followerSpark = new SparkMax(id2, MotorType.kBrushless);
     SparkMaxConfig followerSparkConfig = new SparkMaxConfig();
     followerSparkConfig
-        .inverted(!motorInverted)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(currentLimit)
         .voltageCompensation(maxVoltage)
-        .follow(spark);
+        .follow(spark, true);
     tryUntilOk(
         followerSpark,
         5,

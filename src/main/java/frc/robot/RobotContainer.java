@@ -46,6 +46,7 @@ public class RobotContainer {
   private final Vision vision;
   private final Arm coralElbow;
   private final Arm coralWrist;
+  private final Arm algaeArm;
   private final Elevator elevator;
   private final Roller coralIntake;
   private final Roller algaeIntake;
@@ -78,6 +79,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(camera2Name, robotToCamera2));
         coralElbow = new Arm(new CoralElbowConfig());
         coralWrist = new Arm(new CoralWristConfig());
+        algaeArm = new Arm(new AlgaeArmConfig());
         elevator = new Elevator(new ElevatorSpecificConfig());
         coralIntake = new Roller(new CoralIntakeConfig());
         algaeIntake = new Roller(new AlgaeIntakeConfig());
@@ -100,6 +102,7 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
         coralElbow = new Arm(new CoralElbowConfig(false));
         coralWrist = new Arm(new CoralWristConfig(false));
+        algaeArm = new Arm(new AlgaeArmConfig(false));
         elevator = new Elevator(new ElevatorSpecificConfig(false));
         coralIntake = new Roller(new CoralIntakeConfig(false));
         algaeIntake = new Roller(new AlgaeIntakeConfig(false));
@@ -118,6 +121,7 @@ public class RobotContainer {
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         coralElbow = new Arm(new ArmConfig() {});
         coralWrist = new Arm(new ArmConfig() {});
+        algaeArm = new Arm(new ArmConfig() {});
         elevator = new Elevator(new ElevatorConfig() {});
         coralIntake = new Roller(new CoralIntakeConfig() {});
         algaeIntake = new Roller(new AlgaeIntakeConfig() {});
@@ -165,6 +169,7 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
+    // do we need to add a -> -controller.ger.RightY()
 
     // Lock to 0° when A button is held
     controller
@@ -222,6 +227,12 @@ public class RobotContainer {
               coralWrist.hold();
             },
             coralWrist));
+    algaeArm.setDefaultCommand(
+        Commands.run(
+            () -> {
+              algaeArm.hold();
+            },
+            algaeArm));
 
     operatorController
         .a()
@@ -231,6 +242,7 @@ public class RobotContainer {
                   elevator.runToHeight(1);
                   coralElbow.runToAngle(1.2);
                   coralWrist.runToAngle(1.2);
+                  algaeArm.runToAngle(1.2);
                 }));
     // Arbitrary values again but lowers elevator and coral wrist into the robot.
     operatorController
@@ -265,18 +277,18 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  coralElbow.run(0.1);
+                  algaeArm.run(0.1);
                 },
-                coralElbow));
+                algaeArm));
     // Arbitrary values but compresses climber to hang on to cage.
     operatorController
         .leftTrigger()
         .whileTrue(
             Commands.run(
                 () -> {
-                  coralElbow.run(-0.1);
+                  algaeArm.run(-0.1);
                 },
-                coralElbow));
+                algaeArm));
   }
 
   private void configureVisualization() {
@@ -296,6 +308,9 @@ public class RobotContainer {
 
     coralWrist.visualization.setLength(10);
     coralElbow.visualization.append(coralWrist.visualization);
+
+    algaeArm.visualization.setLength(10);
+    algaeArm.visualization.append(algaeArm.visualization);
 
     SmartDashboard.putData("Jellybean", jellybeanView);
     SmartDashboard.putData("Elevator", elevatorView);

@@ -13,7 +13,16 @@ public class ElevatorSpecificConfig extends ElevatorConfig {
     if (real) {
       io =
           new ElevatorIOSpark(
-              9, 10, 0.0, false, false, 2 * Math.PI, 2 * Math.PI / 60, 40, 0.5, 0.0);
+              10,
+              9,
+              0.0,
+              false,
+              false,
+              2 * Math.PI * 0.0222 / 100,
+              2 * Math.PI * 0.0222 / 100 / 60,
+              40,
+              0.5,
+              0.0);
     } else {
       io =
           new ElevatorIOSim(
