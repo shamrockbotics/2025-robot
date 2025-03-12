@@ -15,13 +15,12 @@ public class ElevatorSpecificConfig extends ElevatorConfig {
           new ElevatorIOSparkMax(
               10,
               9,
-              0.0,
               false,
               false,
-              2 * Math.PI * 0.0222 / 100,
-              2 * Math.PI * 0.0222 / 100 / 60,
+              2 * Math.PI * 0.0222 * 2,
+              2 * Math.PI * 0.0222 * 2 / 60,
               40,
-              0.5,
+              2.0,
               0.0);
     } else {
       io =

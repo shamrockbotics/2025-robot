@@ -16,14 +16,13 @@ import edu.wpi.first.math.filter.Debouncer;
 import java.util.function.DoubleSupplier;
 
 public class ElevatorIOSparkMax implements ElevatorIO {
-  private final double zeroOffsetMeters;
-
   // Hardware objects
   private final SparkMax spark;
   private final RelativeEncoder encoder;
 
   // Closed loop controllers
   private final SparkClosedLoopController controller;
+  private double setpoint = 0.0;
 
   // Connection debouncers
   private final Debouncer connectedDebounce = new Debouncer(0.5);
@@ -31,7 +30,6 @@ public class ElevatorIOSparkMax implements ElevatorIO {
   public ElevatorIOSparkMax(
       int id1,
       int id2,
-      double zeroOffsetMeters,
       boolean motorInverted,
       boolean encoderInverted,
       double encoderPositionFactor,
@@ -41,7 +39,6 @@ public class ElevatorIOSparkMax implements ElevatorIO {
       double positionKd) {
     this(
         id1,
-        zeroOffsetMeters,
         motorInverted,
         encoderInverted,
         encoderPositionFactor,
@@ -68,7 +65,6 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
   public ElevatorIOSparkMax(
       int id,
-      double zeroOffsetMeters,
       boolean motorInverted,
       boolean encoderInverted,
       double encoderPositionFactor,
@@ -76,7 +72,6 @@ public class ElevatorIOSparkMax implements ElevatorIO {
       int currentLimit,
       double positionKp,
       double positionKd) {
-    this.zeroOffsetMeters = zeroOffsetMeters;
     spark = new SparkMax(id, MotorType.kBrushless);
     encoder = spark.getAlternateEncoder();
     controller = spark.getClosedLoopController();
@@ -127,12 +122,13 @@ public class ElevatorIOSparkMax implements ElevatorIO {
         new DoubleSupplier[] {spark::getAppliedOutput, spark::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(spark, spark::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    inputs.targetHeightMeters = setpoint;
     inputs.connected = connectedDebounce.calculate(!sparkStickyFault);
   }
 
   @Override
   public void setPosition(double height) {
-    double setpoint = height + zeroOffsetMeters;
+    setpoint = height;
     controller.setReference(setpoint, ControlType.kPosition);
   }
 

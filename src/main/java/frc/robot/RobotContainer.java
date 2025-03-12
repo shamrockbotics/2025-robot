@@ -224,7 +224,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  elevator.run(0.1);
+                  elevator.run(operatorController.getRightY());
                 },
                 elevator));
 
