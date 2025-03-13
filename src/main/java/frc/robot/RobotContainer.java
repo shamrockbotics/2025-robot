@@ -218,13 +218,21 @@ public class RobotContainer {
               elevator.hold();
             },
             elevator));
+    climber.setDefaultCommand(
+        Commands.run(
+            () -> {
+              climber.hold();
+            },
+            climber));
 
     operatorController
         .a()
         .whileTrue(
             Commands.run(
                 () -> {
-                  elevator.run(operatorController.getRightY());
+                  elevator.runToHeight(0);
+                  coralElbow.runToAngle(1);
+                  coralWrist.runToAngle(1);
                 },
                 elevator));
 
@@ -233,7 +241,9 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  elevator.run(-0.1);
+                  elevator.runToHeight(.5);
+                  coralElbow.runToAngle(1);
+                  coralWrist.runToAngle(1);
                 },
                 elevator));
 
@@ -242,7 +252,9 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  algaeArm.run(0.1);
+                  elevator.runToHeight(.75);
+                  coralElbow.runToAngle(1);
+                  coralWrist.runToAngle(1);
                 },
                 algaeArm));
 
@@ -251,9 +263,25 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  algaeArm.run(-0.1);
+                  elevator.runToHeight(1);
+                  coralElbow.runToAngle(-.08);
+                  coralWrist.runToAngle(-Math.PI / 2);
                 },
                 algaeArm));
+    operatorController
+        .rightStick()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  climber.runToAngle(1.4);
+                }));
+    operatorController
+        .leftStick()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  climber.runToAngle(0);
+                }));
   }
 
   private void configureVisualization() {
@@ -271,7 +299,9 @@ public class RobotContainer {
     coralElbow.visualization.append(coralWrist.visualization);
 
     MechanismRoot2d algaeRoot = sideView.getRoot("Algae Root", 0.8, 0);
-
+    MechanismRoot2d climberRoot = sideView.getRoot("Climber Root", 1.5, 0);
+    climber.visualization.setLength(.3);
+    climberRoot.append(climber.visualization);
     algaeArm.visualization.setLength(.2);
     algaeArm.visualizationAngleOffset = () -> 90;
     algaeArm.visualizationReversed = true;
