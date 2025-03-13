@@ -218,15 +218,21 @@ public class RobotContainer {
               elevator.hold();
             },
             elevator));
+    climber.setDefaultCommand(
+        Commands.run(
+            () -> {
+              climber.stop();
+            },
+            climber));
 
     operatorController
         .a()
         .whileTrue(
             Commands.run(
                 () -> {
-                  elevator.run(operatorController.getRightY());
+                  climber.run(operatorController.getRightY());
                 },
-                elevator));
+                climber));
 
     operatorController
         .b()

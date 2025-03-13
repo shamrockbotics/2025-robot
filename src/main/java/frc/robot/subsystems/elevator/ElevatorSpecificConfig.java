@@ -17,8 +17,8 @@ public class ElevatorSpecificConfig extends ElevatorConfig {
               9,
               false,
               false,
-              2 * Math.PI * 0.0222 * 2,
-              2 * Math.PI * 0.0222 * 2 / 60,
+              2 * Math.PI * 0.0228 * 2,
+              2 * Math.PI * 0.0228 * 2 / 60,
               40,
               2.0,
               0.0);
