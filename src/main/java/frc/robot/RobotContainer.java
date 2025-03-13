@@ -231,8 +231,8 @@ public class RobotContainer {
             Commands.run(
                 () -> {
                   elevator.runToHeight(0);
-                  coralElbow.runToAngle(1);
-                  coralWrist.runToAngle(1);
+                  coralElbow.runToAngle(-.08);
+                  coralWrist.runToAngle(-Math.PI/2);
                 },
                 climber));
 
@@ -242,8 +242,8 @@ public class RobotContainer {
             Commands.run(
                 () -> {
                   elevator.runToHeight(.5);
-                  coralElbow.runToAngle(1);
-                  coralWrist.runToAngle(1);
+                  coralElbow.runToAngle(-.08);
+                  coralWrist.runToAngle(-Math.PI/2);
                 },
                 elevator));
 
@@ -253,8 +253,8 @@ public class RobotContainer {
             Commands.run(
                 () -> {
                   elevator.runToHeight(.75);
-                  coralElbow.runToAngle(1);
-                  coralWrist.runToAngle(1);
+                  coralElbow.runToAngle(-.08);
+                  coralWrist.runToAngle(-Math.PI/2);
                 },
                 algaeArm));
 
