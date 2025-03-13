@@ -221,7 +221,7 @@ public class RobotContainer {
     climber.setDefaultCommand(
         Commands.run(
             () -> {
-              climber.hold();
+              climber.stop();
             },
             climber));
 
@@ -234,7 +234,7 @@ public class RobotContainer {
                   coralElbow.runToAngle(1);
                   coralWrist.runToAngle(1);
                 },
-                elevator));
+                climber));
 
     operatorController
         .b()

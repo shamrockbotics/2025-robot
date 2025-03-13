@@ -36,10 +36,10 @@ public class DriveConstants {
 
   // Zeroed rotation values for each module, see setup instructions
   // position with the drive gear facing the right side of the robot
-  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0.0);
-  public static final Rotation2d frontRightZeroRotation = new Rotation2d(0.0);
-  public static final Rotation2d backLeftZeroRotation = new Rotation2d(0.0);
-  public static final Rotation2d backRightZeroRotation = new Rotation2d(0.0);
+  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(1.760);
+  public static final Rotation2d frontRightZeroRotation = new Rotation2d(0.632);
+  public static final Rotation2d backLeftZeroRotation = new Rotation2d(-1.483);
+  public static final Rotation2d backRightZeroRotation = new Rotation2d(-2.507);
 
   // Device CAN IDs
   public static final int pigeonCanId = 0;
@@ -88,7 +88,7 @@ public class DriveConstants {
   public static final double turnEncoderVelocityFactor = (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
 
   // Turn PID configuration
-  public static final double turnKp = 50.0;
+  public static final double turnKp = 10.0;
   public static final double turnKd = 0.0;
   public static final double turnSimP = 8.0;
   public static final double turnSimD = 0.0;
