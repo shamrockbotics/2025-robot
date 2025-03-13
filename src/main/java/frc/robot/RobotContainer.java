@@ -263,11 +263,14 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  elevator.runToHeight(1);
+                  elevator.runToHeight(1.29);
                   coralElbow.runToAngle(-.08);
                   coralWrist.runToAngle(-Math.PI / 2);
                 },
-                algaeArm));
+                elevator,
+                coralElbow,
+                coralWrist));
+
     operatorController
         .rightStick()
         .whileTrue(
@@ -275,6 +278,7 @@ public class RobotContainer {
                 () -> {
                   climber.runToAngle(1.4);
                 }));
+
     operatorController
         .leftStick()
         .whileTrue(
