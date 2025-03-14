@@ -13,8 +13,6 @@ public interface ArmIO {
     public double currentAmps = 0.0;
   }
 
-  public double maxVoltage = 12.0;
-
   /** Update the set of loggable inputs. */
   public default void updateInputs(ArmIOInputs inputs) {}
 

@@ -113,6 +113,8 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs) {
+    if (encoder.getPosition() < 0.0) encoder.setPosition(0.0);
+
     // Update inputs
     sparkStickyFault = false;
     ifOk(spark, encoder::getPosition, (value) -> inputs.currentHeightMeters = value);

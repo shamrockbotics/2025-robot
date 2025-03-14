@@ -16,6 +16,8 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -147,6 +149,9 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+    UsbCamera climberCamera = CameraServer.startAutomaticCapture(0);
+    UsbCamera coralCamera = CameraServer.startAutomaticCapture(1);
+
     // Configure the button bindings
     configureButtonBindings();
 
@@ -224,18 +229,34 @@ public class RobotContainer {
               climber.stop();
             },
             climber));
+    coralIntake.setDefaultCommand(
+        Commands.run(
+            () -> {
+              coralIntake.stop();
+            },
+            coralIntake));
+    algaeIntake.setDefaultCommand(
+        Commands.run(
+            () -> {
+              algaeIntake.stop();
+            },
+            algaeIntake));
 
+    // loading station
     operatorController
         .a()
         .whileTrue(
             Commands.run(
                 () -> {
-                  elevator.runToHeight(0);
-                  coralElbow.runToAngle(-.08);
-                  coralWrist.runToAngle(-Math.PI/2);
+                  elevator.runToHeight(0.15);
+                  coralElbow.runToAngle(-0.7);
+                  coralWrist.runToAngle(0.342);
                 },
-                climber));
+                elevator,
+                coralElbow,
+                coralWrist));
 
+    // level 2
     operatorController
         .b()
         .whileTrue(
@@ -243,29 +264,35 @@ public class RobotContainer {
                 () -> {
                   elevator.runToHeight(.5);
                   coralElbow.runToAngle(-.08);
-                  coralWrist.runToAngle(-Math.PI/2);
+                  coralWrist.runToAngle(-Math.PI / 2);
                 },
-                elevator));
+                elevator,
+                coralElbow,
+                coralWrist));
 
+    // level 3
     operatorController
         .x()
         .whileTrue(
             Commands.run(
                 () -> {
-                  elevator.runToHeight(.75);
-                  coralElbow.runToAngle(-.08);
-                  coralWrist.runToAngle(-Math.PI/2);
+                  elevator.runToHeight(.988);
+                  coralElbow.runToAngle(-0.79); // -0.458 radians
+                  coralWrist.runToAngle(-1.4); // -1.513 radians
                 },
-                algaeArm));
+                elevator,
+                coralElbow,
+                coralWrist));
 
+    // level 4
     operatorController
         .y()
         .whileTrue(
             Commands.run(
                 () -> {
                   elevator.runToHeight(1.29);
-                  coralElbow.runToAngle(-.08);
-                  coralWrist.runToAngle(-Math.PI / 2);
+                  coralElbow.runToAngle(0.0);
+                  coralWrist.runToAngle(-1.3);
                 },
                 elevator,
                 coralElbow,
@@ -277,7 +304,8 @@ public class RobotContainer {
             Commands.run(
                 () -> {
                   climber.runToAngle(1.4);
-                }));
+                },
+                climber));
 
     operatorController
         .leftStick()
@@ -285,7 +313,51 @@ public class RobotContainer {
             Commands.run(
                 () -> {
                   climber.runToAngle(0);
-                }));
+                },
+                climber));
+
+    // stow position
+    operatorController
+        .start()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  elevator.runToHeight(0);
+                  coralElbow.runToAngle(0);
+                  coralWrist.runToAngle(-0.2);
+                },
+                elevator,
+                coralElbow,
+                coralWrist));
+
+    // coral arm manual control
+    operatorController
+        .rightBumper()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  coralElbow.run(operatorController.getRightX() * 0.5);
+                  coralWrist.run(-operatorController.getRightY() * 0.5);
+                },
+                coralElbow,
+                coralWrist));
+
+    operatorController
+        .rightTrigger()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  coralIntake.run(0.20);
+                },
+                coralIntake));
+    operatorController
+        .leftTrigger()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  coralIntake.run(-1.0);
+                },
+                coralIntake));
   }
 
   private void configureVisualization() {

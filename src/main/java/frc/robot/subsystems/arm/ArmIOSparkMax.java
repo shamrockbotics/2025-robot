@@ -30,6 +30,8 @@ public class ArmIOSparkMax implements ArmIO {
   // Connection debouncers
   private final Debouncer connectedDebounce = new Debouncer(0.5);
 
+  double maxVoltage = 12.0;
+
   public ArmIOSparkMax(
       int id1,
       int id2,
@@ -39,6 +41,7 @@ public class ArmIOSparkMax implements ArmIO {
       double encoderPositionFactor,
       double encoderVelocityFactor,
       int currentLimit,
+      double voltageLimit,
       double positionKp,
       double positionKd) {
     this(
@@ -49,6 +52,7 @@ public class ArmIOSparkMax implements ArmIO {
         encoderPositionFactor,
         encoderVelocityFactor,
         currentLimit,
+        voltageLimit,
         positionKp,
         positionKd);
     SparkMax followerSpark = new SparkMax(id2, MotorType.kBrushless);
@@ -56,7 +60,7 @@ public class ArmIOSparkMax implements ArmIO {
     followerSparkConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(currentLimit)
-        .voltageCompensation(maxVoltage)
+        .voltageCompensation(voltageLimit)
         .follow(spark, true);
     tryUntilOk(
         followerSpark,
@@ -76,9 +80,11 @@ public class ArmIOSparkMax implements ArmIO {
       double encoderPositionFactor,
       double encoderVelocityFactor,
       int currentLimit,
+      double voltageLimit,
       double positionKp,
       double positionKd) {
     this.zeroOffsetRads = zeroOffsetRads;
+    maxVoltage = voltageLimit;
     spark = new SparkMax(id, MotorType.kBrushless);
     encoder = spark.getAbsoluteEncoder();
     controller = spark.getClosedLoopController();
@@ -88,7 +94,7 @@ public class ArmIOSparkMax implements ArmIO {
         .inverted(motorInverted)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(currentLimit)
-        .voltageCompensation(maxVoltage);
+        .voltageCompensation(voltageLimit);
     sparkConfig
         .absoluteEncoder
         .inverted(encoderInverted)

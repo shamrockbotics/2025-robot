@@ -8,7 +8,7 @@ public class ElevatorSpecificConfig extends ElevatorConfig {
   public ElevatorSpecificConfig(boolean real) {
     name = "Elevator";
     minHeightMeters = 0;
-    maxHeightMeters = 2;
+    maxHeightMeters = 1.3;
     allowedErrorMeters = 0.02;
     if (real) {
       io =
@@ -20,7 +20,7 @@ public class ElevatorSpecificConfig extends ElevatorConfig {
               2 * Math.PI * 0.0228 * 2,
               2 * Math.PI * 0.0228 * 2 / 60,
               40,
-              2.0,
+              10.0,
               0.0);
     } else {
       io =

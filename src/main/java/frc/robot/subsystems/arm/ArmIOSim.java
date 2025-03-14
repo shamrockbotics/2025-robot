@@ -22,6 +22,8 @@ public class ArmIOSim implements ArmIO {
   private boolean closedLoop = false;
   private double appliedVolts = 0.0;
 
+  double maxVoltage = 12.0;
+
   public ArmIOSim(
       double minAngleRads,
       double maxAngleRads,
