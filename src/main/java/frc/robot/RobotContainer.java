@@ -172,7 +172,8 @@ public class RobotContainer {
             drive,
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -controller.getRightX(),
+            SmartDashboard.getBoolean("Field Orented", false)));
 
     // Lock to 0° when A button is held
     controller
@@ -303,7 +304,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  climber.runToAngle(1.4);
+                  climber.run(0.7);
                 },
                 climber));
 
