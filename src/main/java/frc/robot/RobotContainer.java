@@ -353,7 +353,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  coralIntake.run(0.60);
+                  coralIntake.run(1.0);
                 },
                 coralIntake));
     operatorController
