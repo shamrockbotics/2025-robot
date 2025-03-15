@@ -255,7 +255,8 @@ public class RobotContainer {
                 },
                 elevator,
                 coralElbow,
-                coralWrist));
+                coralWrist,
+                coralIntake));
 
     // level 2
     operatorController
@@ -270,7 +271,8 @@ public class RobotContainer {
                 },
                 elevator,
                 coralElbow,
-                coralWrist));
+                coralWrist,
+                coralIntake));
 
     // level 3
     operatorController
@@ -285,7 +287,8 @@ public class RobotContainer {
                 },
                 elevator,
                 coralElbow,
-                coralWrist));
+                coralWrist,
+                coralIntake));
 
     // level 4
     operatorController
@@ -300,7 +303,8 @@ public class RobotContainer {
                 },
                 elevator,
                 coralElbow,
-                coralWrist));
+                coralWrist,
+                coralIntake));
 
     operatorController
         .rightStick()
