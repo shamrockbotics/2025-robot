@@ -248,7 +248,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  elevator.runToHeight(0.2);
+                  elevator.runToHeight(0.16);
                   coralElbow.runToAngle(-0.7);
                   coralWrist.runToAngle(0.1);
                 },
@@ -332,21 +332,21 @@ public class RobotContainer {
 
     // coral arm manual control
     operatorController
-    .rightBumper()
-    .whileTrue(
-        Commands.run(
-            () -> {
-              coralElbow.run(-operatorController.getRightY() * 0.5);
-            },
-            coralElbow));
-            operatorController
-            .leftBumper()
-            .whileTrue(
-                Commands.run(
-                    () -> {
-                      coralWrist.run(-operatorController.getLeftY() * 0.5);
-                    },
-                    coralWrist));
+        .rightBumper()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  coralElbow.run(-operatorController.getRightY() * 0.5);
+                },
+                coralElbow));
+    operatorController
+        .leftBumper()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  coralWrist.run(-operatorController.getLeftY() * 0.5);
+                },
+                coralWrist));
 
     operatorController
         .rightTrigger()
