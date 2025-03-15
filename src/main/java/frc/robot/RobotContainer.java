@@ -262,7 +262,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  elevator.runToHeight(.81);
+                  elevator.runToHeight(.65);
                   coralElbow.runToAngle(-.79);
                   coralWrist.runToAngle(-1.4);
                 },
