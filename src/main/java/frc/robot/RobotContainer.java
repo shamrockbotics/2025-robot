@@ -134,6 +134,8 @@ public class RobotContainer {
 
     climberServo = new Servo(0);
 
+    SmartDashboard.putBoolean("Field Oriented", SmartDashboard.getBoolean("Field Oriented", false));
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -180,7 +182,7 @@ public class RobotContainer {
             () -> -controller.getLeftY(),
             () -> -controller.getLeftX(),
             () -> -controller.getRightX(),
-            SmartDashboard.getBoolean("Field Orented", false)));
+            SmartDashboard.getBoolean("Field Oriented", false)));
 
     // Lock to 0° when A button is held
     controller
