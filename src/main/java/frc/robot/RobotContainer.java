@@ -251,12 +251,10 @@ public class RobotContainer {
                   elevator.runToHeight(0.13);
                   coralElbow.runToAngle(-0.7);
                   coralWrist.runToAngle(0.1);
-                  coralIntake.run(0.3);
                 },
                 elevator,
                 coralElbow,
-                coralWrist,
-                coralIntake));
+                coralWrist));
 
     // level 2
     operatorController
@@ -267,12 +265,10 @@ public class RobotContainer {
                   elevator.runToHeight(.65);
                   coralElbow.runToAngle(-.79);
                   coralWrist.runToAngle(-1.4);
-                  coralIntake.run(0.3);
                 },
                 elevator,
                 coralElbow,
-                coralWrist,
-                coralIntake));
+                coralWrist));
 
     // level 3
     operatorController
@@ -283,12 +279,10 @@ public class RobotContainer {
                   elevator.runToHeight(1.05); // raise height
                   coralElbow.runToAngle(-0.79); // -0.458 radians
                   coralWrist.runToAngle(-1.4); // -1.513 radians
-                  coralIntake.run(0.3);
                 },
                 elevator,
                 coralElbow,
-                coralWrist,
-                coralIntake));
+                coralWrist));
 
     // level 4
     operatorController
@@ -299,12 +293,10 @@ public class RobotContainer {
                   elevator.runToHeight(1.25);
                   coralElbow.runToAngle(-0.15); // lowered height by 50%
                   coralWrist.runToAngle(-1.3); // lower wrist
-                  coralIntake.run(0.3);
                 },
                 elevator,
                 coralElbow,
-                coralWrist,
-                coralIntake));
+                coralWrist));
 
     operatorController
         .rightStick()
