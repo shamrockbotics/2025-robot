@@ -332,15 +332,21 @@ public class RobotContainer {
 
     // coral arm manual control
     operatorController
-        .rightBumper()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  coralElbow.run(operatorController.getRightX() * 0.5);
-                  coralWrist.run(-operatorController.getRightY() * 0.5);
-                },
-                coralElbow,
-                coralWrist));
+    .rightBumper()
+    .whileTrue(
+        Commands.run(
+            () -> {
+              coralElbow.run(-operatorController.getRightY() * 0.5);
+            },
+            coralElbow));
+            operatorController
+            .leftBumper()
+            .whileTrue(
+                Commands.run(
+                    () -> {
+                      coralWrist.run(-operatorController.getLeftY() * 0.5);
+                    },
+                    coralWrist));
 
     operatorController
         .rightTrigger()
