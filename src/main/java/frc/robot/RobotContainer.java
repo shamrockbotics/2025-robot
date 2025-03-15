@@ -21,6 +21,7 @@ import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -52,6 +53,7 @@ public class RobotContainer {
   private final Roller coralIntake;
   private final Roller algaeIntake;
   private final Arm climber;
+  private final Servo climberServo;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -130,8 +132,13 @@ public class RobotContainer {
         break;
     }
 
+    climberServo = new Servo(0);
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+    autoChooser.addOption(
+        "Leave Start", DriveCommands.joystickDrive(drive, () -> 0.2, () -> 0, () -> 0));
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -228,6 +235,7 @@ public class RobotContainer {
         Commands.run(
             () -> {
               climber.stop();
+              climberServo.set(1.0);
             },
             climber));
     coralIntake.setDefaultCommand(
@@ -299,24 +307,6 @@ public class RobotContainer {
                 coralElbow,
                 coralWrist));
 
-    operatorController
-        .rightStick()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  climber.run(0.7);
-                },
-                climber));
-
-    operatorController
-        .leftStick()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  climber.runToAngle(0);
-                },
-                climber));
-
     // stow position
     operatorController
         .start()
@@ -331,7 +321,7 @@ public class RobotContainer {
                 coralElbow,
                 coralWrist));
 
-    // coral arm manual control
+    // coral elbow manual control
     operatorController
         .rightBumper()
         .whileTrue(
@@ -340,6 +330,8 @@ public class RobotContainer {
                   coralElbow.run(-operatorController.getRightY() * 0.5);
                 },
                 coralElbow));
+
+    // coral wrist manual control
     operatorController
         .leftBumper()
         .whileTrue(
@@ -349,6 +341,7 @@ public class RobotContainer {
                 },
                 coralWrist));
 
+    // Coral intake control
     operatorController
         .rightTrigger()
         .whileTrue(
@@ -362,9 +355,29 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  coralIntake.run(-0.2);
+                  coralIntake.run(-0.3);
                 },
                 coralIntake));
+
+    // Climber controls
+    controller
+        .rightStick()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  climber.run(0.4);
+                },
+                climber));
+
+    controller
+        .leftStick()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  climber.run(-.2);
+                  climberServo.set(0.0);
+                },
+                climber));
   }
 
   private void configureVisualization() {
