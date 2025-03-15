@@ -199,7 +199,7 @@ public class RobotContainer {
 
     // Reset gyro to 0° when B button is pressed
     controller
-        .b()
+        .y()
         .onTrue(
             Commands.runOnce(
                     () ->
@@ -363,7 +363,7 @@ public class RobotContainer {
 
     // Climber controls
     controller
-        .rightStick()
+        .rightBumper()
         .whileTrue(
             Commands.run(
                 () -> {
@@ -372,7 +372,7 @@ public class RobotContainer {
                 climber));
 
     controller
-        .leftStick()
+        .leftBumper()
         .whileTrue(
             Commands.run(
                 () -> {
