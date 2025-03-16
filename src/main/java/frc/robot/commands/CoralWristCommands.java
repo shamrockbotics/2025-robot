@@ -13,7 +13,7 @@ public class CoralWristCommands {
         () -> {
           arm.runToAngle(-1.3);
         },
-        arm);
+        arm).until(() -> arm.onTarget());
   }
   ;
 

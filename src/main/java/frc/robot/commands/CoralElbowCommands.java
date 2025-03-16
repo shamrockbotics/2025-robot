@@ -13,7 +13,7 @@ public class CoralElbowCommands {
         () -> {
           arm.runToAngle(0);
         },
-        arm);
+        arm).until(() -> arm.onTarget());
   }
   ;
 
