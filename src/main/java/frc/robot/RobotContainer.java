@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.commands.AutoCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.arm.*;
 import frc.robot.subsystems.drive.*;
@@ -141,6 +142,7 @@ public class RobotContainer {
 
     autoChooser.addOption(
         "Leave Start", DriveCommands.joystickDrive(drive, () -> 0.2, () -> 0, () -> 0));
+    autoChooser.addOption("L4", AutoCommands.L4(elevator, coralIntake, coralElbow, coralWrist, drive));
 
     // Set up SysId routines
     autoChooser.addOption(
