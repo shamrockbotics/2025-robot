@@ -16,6 +16,7 @@ public class AutoCommands {
       Elevator elevator, Roller roller, Arm coralElbow, Arm coralWrist, Drive drive) {
     return Commands.sequence(
         DriveCommands.joystickDrive(drive, () -> 0.4, () -> 0, () -> 0, false).withTimeout(4.0),
+        DriveCommands.joystickDrive(drive, () -> -0.4, () -> 0, () -> 0, false).withTimeout(0.5),
         DriveCommands.joystickDrive(drive, () -> 0, () -> 0, () -> 0, false).withTimeout(0.1),
         ElevatorCommands.runToL4(elevator),
         CoralElbowCommands.setL4(coralElbow),
