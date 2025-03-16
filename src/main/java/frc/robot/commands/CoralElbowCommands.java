@@ -10,10 +10,11 @@ public class CoralElbowCommands {
 
   public static Command setL4(Arm arm) {
     return Commands.run(
-        () -> {
-          arm.runToAngle(0);
-        },
-        arm).until(() -> arm.onTarget());
+            () -> {
+              arm.runToAngle(0);
+            },
+            arm)
+        .until(() -> arm.onTarget());
   }
   ;
 

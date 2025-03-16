@@ -10,10 +10,11 @@ public class CoralWristCommands {
 
   public static Command setL4(Arm arm) {
     return Commands.run(
-        () -> {
-          arm.runToAngle(-1.3);
-        },
-        arm).until(() -> arm.onTarget());
+            () -> {
+              arm.runToAngle(-1.3);
+            },
+            arm)
+        .until(() -> arm.onTarget());
   }
   ;
 

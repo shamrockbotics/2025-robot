@@ -9,10 +9,11 @@ public class ElevatorCommands {
 
   public static Command runToL4(Elevator elevator) {
     return Commands.run(
-        () -> {
-          elevator.runToHeight(1.25);
-        },
-        elevator).until(() -> elevator.onTarget());
+            () -> {
+              elevator.runToHeight(1.25);
+            },
+            elevator)
+        .until(() -> elevator.onTarget());
   }
 
   public static Command holdPosition(Elevator elevator) {
