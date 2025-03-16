@@ -15,6 +15,31 @@ public class ElevatorCommands {
             elevator)
         .until(() -> elevator.onTarget());
   }
+  public static Command runToL3(Elevator elevator) {
+    return Commands.run(
+            () -> {
+              elevator.runToHeight(1.05);
+            },
+            elevator)
+        .until(() -> elevator.onTarget());
+  }
+  public static Command runToL2(Elevator elevator) {
+    return Commands.run(
+            () -> {
+              elevator.runToHeight(.65);
+            },
+            elevator)
+        .until(() -> elevator.onTarget());
+  }
+  public static Command runToL1(Elevator elevator) {
+    return Commands.run(
+            () -> {
+              elevator.runToHeight(0);
+            },
+            elevator)
+        .until(() -> elevator.onTarget());
+  }
+
 
   public static Command holdPosition(Elevator elevator) {
     return Commands.run(

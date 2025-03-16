@@ -17,6 +17,34 @@ public class CoralElbowCommands {
         .until(() -> arm.onTarget());
   }
   ;
+  public static Command setL3(Arm arm) {
+    return Commands.run(
+            () -> {
+              arm.runToAngle(-.15);
+            },
+            arm)
+        .until(() -> arm.onTarget());
+  }
+  ;
+  public static Command setL2(Arm arm) {
+    return Commands.run(
+            () -> {
+              arm.runToAngle(-1.4);
+            },
+            arm)
+        .until(() -> arm.onTarget());
+  }
+  ;
+
+  public static Command setL1(Arm arm) {
+    return Commands.run(
+            () -> {
+              arm.runToAngle(0);
+            },
+            arm)
+        .until(() -> arm.onTarget());
+  }
+  ;
 
   public static Command holdPosition(Arm arm) {
     return Commands.run(
