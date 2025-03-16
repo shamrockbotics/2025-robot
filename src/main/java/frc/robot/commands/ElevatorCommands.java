@@ -11,7 +11,7 @@ public class ElevatorCommands {
   public static Command runToL4(Elevator elevator) {
     return Commands.run(
         () -> {
-          elevator.runToHeight(1.29);
+          elevator.runToHeight(1.25);
         },
         elevator);
   }

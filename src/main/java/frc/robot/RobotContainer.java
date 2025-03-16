@@ -142,7 +142,8 @@ public class RobotContainer {
 
     autoChooser.addOption(
         "Leave Start", DriveCommands.joystickDrive(drive, () -> 0.2, () -> 0, () -> 0));
-    autoChooser.addOption("L4", AutoCommands.L4(elevator, coralIntake, coralElbow, coralWrist, drive));
+    autoChooser.addOption(
+        "L4", AutoCommands.L4(elevator, coralIntake, coralElbow, coralWrist, drive));
 
     // Set up SysId routines
     autoChooser.addOption(
