@@ -18,23 +18,31 @@ public class CoralWristCommands {
   }
   ;
 
-  public static Command setL3(Arm arm){
-    return Commands.run(() -> {
-      arm.runToAngle(-1.4);
-    },arm).until(() -> arm.onTarget());
-
+  public static Command setL3(Arm arm) {
+    return Commands.run(
+            () -> {
+              arm.runToAngle(-1.4);
+            },
+            arm)
+        .until(() -> arm.onTarget());
   }
-  public static Command setL2(Arm arm){
-    return Commands.run(() -> {
-      arm.runToAngle(-1.4);
-    },arm).until(() -> arm.onTarget());
 
+  public static Command setL2(Arm arm) {
+    return Commands.run(
+            () -> {
+              arm.runToAngle(-1.4);
+            },
+            arm)
+        .until(() -> arm.onTarget());
   }
-  public static Command setL1(Arm arm){
-    return Commands.run(() -> {
-      arm.runToAngle(-1.3);
-    },arm).until(() -> arm.onTarget());
 
+  public static Command setL1(Arm arm) {
+    return Commands.run(
+            () -> {
+              arm.runToAngle(-1.3);
+            },
+            arm)
+        .until(() -> arm.onTarget());
   }
 
   public static Command holdPosition(Arm arm) {

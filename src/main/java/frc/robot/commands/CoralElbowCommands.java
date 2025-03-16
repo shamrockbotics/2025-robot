@@ -17,6 +17,7 @@ public class CoralElbowCommands {
         .until(() -> arm.onTarget());
   }
   ;
+
   public static Command setL3(Arm arm) {
     return Commands.run(
             () -> {
@@ -26,6 +27,7 @@ public class CoralElbowCommands {
         .until(() -> arm.onTarget());
   }
   ;
+
   public static Command setL2(Arm arm) {
     return Commands.run(
             () -> {

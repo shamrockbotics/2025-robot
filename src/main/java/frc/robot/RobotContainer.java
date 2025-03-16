@@ -144,9 +144,12 @@ public class RobotContainer {
         "Leave Start", DriveCommands.joystickDrive(drive, () -> 0.2, () -> 0, () -> 0));
     autoChooser.addOption(
         "L4", AutoCommands.L4(elevator, coralIntake, coralElbow, coralWrist, drive));
-    autoChooser.addOption("L3", AutoCommands.L3(elevator, coralIntake, coralElbow, coralWrist, drive));
-    autoChooser.addOption("L2", AutoCommands.L2(elevator, coralIntake, coralElbow, coralWrist, drive));
-    autoChooser.addOption("L1", AutoCommands.L1(elevator, coralIntake, coralElbow, coralWrist, drive));
+    autoChooser.addOption(
+        "L3", AutoCommands.L3(elevator, coralIntake, coralElbow, coralWrist, drive));
+    autoChooser.addOption(
+        "L2", AutoCommands.L2(elevator, coralIntake, coralElbow, coralWrist, drive));
+    autoChooser.addOption(
+        "L1", AutoCommands.L1(elevator, coralIntake, coralElbow, coralWrist, drive));
     // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));

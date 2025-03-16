@@ -15,6 +15,7 @@ public class ElevatorCommands {
             elevator)
         .until(() -> elevator.onTarget());
   }
+
   public static Command runToL3(Elevator elevator) {
     return Commands.run(
             () -> {
@@ -23,6 +24,7 @@ public class ElevatorCommands {
             elevator)
         .until(() -> elevator.onTarget());
   }
+
   public static Command runToL2(Elevator elevator) {
     return Commands.run(
             () -> {
@@ -31,6 +33,7 @@ public class ElevatorCommands {
             elevator)
         .until(() -> elevator.onTarget());
   }
+
   public static Command runToL1(Elevator elevator) {
     return Commands.run(
             () -> {
@@ -39,7 +42,6 @@ public class ElevatorCommands {
             elevator)
         .until(() -> elevator.onTarget());
   }
-
 
   public static Command holdPosition(Elevator elevator) {
     return Commands.run(

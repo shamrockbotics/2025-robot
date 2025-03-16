@@ -26,39 +26,44 @@ public class AutoCommands {
   }
 
   public static Command L3(
-    Elevator elevator, Roller roller, Arm coralElbow, Arm coralWrist, Drive drive) {
-        return Commands.sequence(
-            DriveCommands.joystickDrive(drive, () -> 0.4, () -> 0, () -> 0, false).withTimeout(4.0),
-            DriveCommands.joystickDrive(drive, () -> -0.4, () -> 0, () -> 0, false).withTimeout(0.5),
-            DriveCommands.joystickDrive(drive, () -> 0, () -> 0, () -> 0, false).withTimeout(0.1),
-            ElevatorCommands.runToL3(elevator),
-            CoralElbowCommands.setL3(coralElbow),
-            CoralWristCommands.setL3(coralWrist),
-            Commands.waitSeconds(0.5),
-            CoralIntakeCommands.extake(roller));
-    };
-public static Command L2(
-    Elevator elevator, Roller roller, Arm coralElbow, Arm coralWrist, Drive drive) {
-        return Commands.sequence(
-            DriveCommands.joystickDrive(drive, () -> 0.4, () -> 0, () -> 0, false).withTimeout(4.0),
-            DriveCommands.joystickDrive(drive, () -> -0.4, () -> 0, () -> 0, false).withTimeout(0.5),
-            DriveCommands.joystickDrive(drive, () -> 0, () -> 0, () -> 0, false).withTimeout(0.1),
-            ElevatorCommands.runToL2(elevator),
-            CoralElbowCommands.setL2(coralElbow),
-            CoralWristCommands.setL2(coralWrist),
-            Commands.waitSeconds(0.5),
-            CoralIntakeCommands.extake(roller));
- };
- public static Command L1(
-    Elevator elevator, Roller roller, Arm coralElbow, Arm coralWrist, Drive drive) {
-        return Commands.sequence(
-            DriveCommands.joystickDrive(drive, () -> 0.4, () -> 0, () -> 0, false).withTimeout(4.0),
-            DriveCommands.joystickDrive(drive, () -> -0.4, () -> 0, () -> 0, false).withTimeout(0.5),
-            DriveCommands.joystickDrive(drive, () -> 0, () -> 0, () -> 0, false).withTimeout(0.1),
-            ElevatorCommands.runToL1(elevator),
-            CoralElbowCommands.setL1(coralElbow),
-            CoralWristCommands.setL1(coralWrist),
-            Commands.waitSeconds(0.5),
-            CoralIntakeCommands.extake(roller));
- };
+      Elevator elevator, Roller roller, Arm coralElbow, Arm coralWrist, Drive drive) {
+    return Commands.sequence(
+        DriveCommands.joystickDrive(drive, () -> 0.4, () -> 0, () -> 0, false).withTimeout(4.0),
+        DriveCommands.joystickDrive(drive, () -> -0.4, () -> 0, () -> 0, false).withTimeout(0.5),
+        DriveCommands.joystickDrive(drive, () -> 0, () -> 0, () -> 0, false).withTimeout(0.1),
+        ElevatorCommands.runToL3(elevator),
+        CoralElbowCommands.setL3(coralElbow),
+        CoralWristCommands.setL3(coralWrist),
+        Commands.waitSeconds(0.5),
+        CoralIntakeCommands.extake(roller));
+  }
+  ;
+
+  public static Command L2(
+      Elevator elevator, Roller roller, Arm coralElbow, Arm coralWrist, Drive drive) {
+    return Commands.sequence(
+        DriveCommands.joystickDrive(drive, () -> 0.4, () -> 0, () -> 0, false).withTimeout(4.0),
+        DriveCommands.joystickDrive(drive, () -> -0.4, () -> 0, () -> 0, false).withTimeout(0.5),
+        DriveCommands.joystickDrive(drive, () -> 0, () -> 0, () -> 0, false).withTimeout(0.1),
+        ElevatorCommands.runToL2(elevator),
+        CoralElbowCommands.setL2(coralElbow),
+        CoralWristCommands.setL2(coralWrist),
+        Commands.waitSeconds(0.5),
+        CoralIntakeCommands.extake(roller));
+  }
+  ;
+
+  public static Command L1(
+      Elevator elevator, Roller roller, Arm coralElbow, Arm coralWrist, Drive drive) {
+    return Commands.sequence(
+        DriveCommands.joystickDrive(drive, () -> 0.4, () -> 0, () -> 0, false).withTimeout(4.0),
+        DriveCommands.joystickDrive(drive, () -> -0.4, () -> 0, () -> 0, false).withTimeout(0.5),
+        DriveCommands.joystickDrive(drive, () -> 0, () -> 0, () -> 0, false).withTimeout(0.1),
+        ElevatorCommands.runToL1(elevator),
+        CoralElbowCommands.setL1(coralElbow),
+        CoralWristCommands.setL1(coralWrist),
+        Commands.waitSeconds(0.5),
+        CoralIntakeCommands.extake(roller));
+  }
+  ;
 }
