@@ -241,7 +241,6 @@ public class RobotContainer {
               elevator.hold();
             },
             elevator));
-<<<<<<< Updated upstream
     climber.setDefaultCommand(
         Commands.run(
             () -> {
@@ -263,39 +262,6 @@ public class RobotContainer {
             algaeIntake));
 
     // loading station (human player station)
-=======
-    // Intake and extake coral. On press of trigger. Run for couple seconds.
-    operatorController
-        .rightTrigger()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  coralIntake.run(.1);
-                }));
-    operatorController
-        .leftTrigger()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  coralIntake.run(-0.1);
-                }));
-    // Intake and extake algea. On press of bumper. Run for couple seconds.
-    operatorController
-        .rightBumper()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  algaeIntake.run(-.1);
-                }));
-    operatorController
-        .leftBumper()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  algaeIntake.run(-.1);
-                }));
-    // Position for reception from human player.
->>>>>>> Stashed changes
     operatorController
         .a()
         .whileTrue(
@@ -305,16 +271,11 @@ public class RobotContainer {
                   coralElbow.runToAngle(-0.7);
                   coralWrist.runToAngle(0.1);
                 },
-<<<<<<< Updated upstream
                 elevator,
                 coralElbow,
                 coralWrist));
 
     // level 2
-=======
-                elevator));
-    // Set Elevator L2
->>>>>>> Stashed changes
     operatorController
         .b()
         .whileTrue(
@@ -324,22 +285,16 @@ public class RobotContainer {
                   coralElbow.runToAngle(-.79);
                   coralWrist.runToAngle(-1.4);
                 },
-<<<<<<< Updated upstream
                 elevator,
                 coralElbow,
                 coralWrist));
 
     // level 3
-=======
-                elevator));
-    // Set Elevator L3
->>>>>>> Stashed changes
     operatorController
         .x()
         .whileTrue(
             Commands.run(
                 () -> {
-<<<<<<< Updated upstream
                   elevator.runToHeight(1.05); // raise height
                   coralElbow.runToAngle(-0.79); // -0.458 radians
                   coralWrist.runToAngle(-1.4); // -1.513 radians
@@ -349,17 +304,6 @@ public class RobotContainer {
                 coralWrist));
 
     // level 4
-=======
-                  algaeArm.run(operatorController.getLeftY());
-                },
-                algaeArm));
-    Commands.run(
-        () -> {
-          algaeArm.run(1);
-        },
-        algaeArm);
-    // Set elevator L4
->>>>>>> Stashed changes
     operatorController
         .y()
         .whileTrue(
@@ -369,7 +313,6 @@ public class RobotContainer {
                   coralElbow.runToAngle(-0.15); // lowered height by 50%
                   coralWrist.runToAngle(-1.3); // lower wrist
                 },
-<<<<<<< Updated upstream
                 elevator,
                 coralElbow,
                 coralWrist));
@@ -445,14 +388,6 @@ public class RobotContainer {
                   climberServo.set(0.0);
                 },
                 climber));
-=======
-                algaeArm));
-    Commands.run(
-        () -> {
-          algaeArm.run(operatorController.getLeftY());
-        },
-        algaeArm);
->>>>>>> Stashed changes
   }
 
   private void configureVisualization() {
