@@ -28,8 +28,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.AutoCommands;
-import frc.robot.commands.DriveCommands;
+import frc.robot.commands.*;
 import frc.robot.subsystems.arm.*;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.*;
@@ -142,14 +141,6 @@ public class RobotContainer {
 
     autoChooser.addOption(
         "Leave Start", DriveCommands.joystickDrive(drive, () -> 0.2, () -> 0, () -> 0));
-    autoChooser.addOption(
-        "L4", AutoCommands.L4(elevator, coralIntake, coralElbow, coralWrist, drive));
-    autoChooser.addOption(
-        "L3", AutoCommands.L3(elevator, coralIntake, coralElbow, coralWrist, drive));
-    autoChooser.addOption(
-        "L2", AutoCommands.L2(elevator, coralIntake, coralElbow, coralWrist, drive));
-    autoChooser.addOption(
-        "L1", AutoCommands.L1(elevator, coralIntake, coralElbow, coralWrist, drive));
     // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
@@ -264,58 +255,16 @@ public class RobotContainer {
     // loading station (human player station)
     operatorController
         .a()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  elevator.runToHeight(0.13);
-                  coralElbow.runToAngle(-0.7);
-                  coralWrist.runToAngle(0.1);
-                },
-                elevator,
-                coralElbow,
-                coralWrist));
-
-    // level 2
+        .whileTrue(new IntakePosition(elevator,coralElbow,coralWrist));
     operatorController
         .b()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  elevator.runToHeight(.65);
-                  coralElbow.runToAngle(-.79);
-                  coralWrist.runToAngle(-1.4);
-                },
-                elevator,
-                coralElbow,
-                coralWrist));
-
-    // level 3
+        .whileTrue(new L2(elevator,coralElbow,coralWrist));
     operatorController
         .x()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  elevator.runToHeight(1.05); // raise height
-                  coralElbow.runToAngle(-0.79); // -0.458 radians
-                  coralWrist.runToAngle(-1.4); // -1.513 radians
-                },
-                elevator,
-                coralElbow,
-                coralWrist));
-
-    // level 4
+        .whileTrue(new L3(elevator,coralElbow,coralWrist));
     operatorController
         .y()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  elevator.runToHeight(1.25);
-                  coralElbow.runToAngle(-0.15); // lowered height by 50%
-                  coralWrist.runToAngle(-1.3); // lower wrist
-                },
-                elevator,
-                coralElbow,
-                coralWrist));
+        .whileTrue(new L4(elevator, coralElbow, coralWrist));
 
     // stow position
     operatorController
