@@ -170,9 +170,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX(),
+            () -> -controller.getLeftY() * heightLimitMultiplier(),
+            () -> -controller.getLeftX() * heightLimitMultiplier(),
+            () -> -controller.getRightX() * heightLimitMultiplier(),
             SmartDashboard.getBoolean("Field Oriented", false)));
 
     // Switch to X pattern when X button is pressed
@@ -325,5 +325,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  private double heightLimitMultiplier() {
+    return 1.0 - (elevator.getHeightPercent() * 0.5);    
   }
 }
