@@ -48,10 +48,8 @@ public class RobotContainer {
   private final Vision vision;
   private final Arm coralElbow;
   private final Arm coralWrist;
-  private final Arm algaeArm;
   private final Elevator elevator;
   private final Roller coralIntake;
-  private final Roller algaeIntake;
   private final Arm climber;
   private final Servo climberServo;
 
@@ -82,10 +80,8 @@ public class RobotContainer {
                 new VisionIOPhotonVision(camera2Name, robotToCamera2));
         coralElbow = new Arm(new CoralElbowConfig());
         coralWrist = new Arm(new CoralWristConfig());
-        algaeArm = new Arm(new AlgaeArmConfig());
         elevator = new Elevator(new ElevatorSpecificConfig());
         coralIntake = new Roller(new CoralIntakeConfig());
-        algaeIntake = new Roller(new AlgaeIntakeConfig());
         climber = new Arm(new ClimberConfig());
         break;
 
@@ -105,10 +101,8 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
         coralElbow = new Arm(new CoralElbowConfig(false));
         coralWrist = new Arm(new CoralWristConfig(false));
-        algaeArm = new Arm(new AlgaeArmConfig(false));
         elevator = new Elevator(new ElevatorSpecificConfig(false));
         coralIntake = new Roller(new CoralIntakeConfig(false));
-        algaeIntake = new Roller(new AlgaeIntakeConfig(false));
         climber = new Arm(new ClimberConfig(false));
         break;
 
@@ -124,17 +118,15 @@ public class RobotContainer {
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         coralElbow = new Arm(new ArmConfig() {});
         coralWrist = new Arm(new ArmConfig() {});
-        algaeArm = new Arm(new ArmConfig() {});
         elevator = new Elevator(new ElevatorConfig() {});
         coralIntake = new Roller(new CoralIntakeConfig() {});
-        algaeIntake = new Roller(new AlgaeIntakeConfig() {});
         climber = new Arm(new ClimberConfig() {});
         break;
     }
 
     climberServo = new Servo(0);
 
-    SmartDashboard.putBoolean("Field Oriented", SmartDashboard.getBoolean("Field Oriented", false));
+    SmartDashboard.setDefaultBoolean("Field Oriented",  false);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -183,16 +175,6 @@ public class RobotContainer {
             () -> -controller.getRightX(),
             SmartDashboard.getBoolean("Field Oriented", false)));
 
-    // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
-
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
@@ -220,12 +202,6 @@ public class RobotContainer {
               coralWrist.hold();
             },
             coralWrist));
-    algaeArm.setDefaultCommand(
-        Commands.run(
-            () -> {
-              algaeArm.hold();
-            },
-            algaeArm));
     elevator.setDefaultCommand(
         Commands.run(
             () -> {
@@ -245,26 +221,12 @@ public class RobotContainer {
               coralIntake.stop();
             },
             coralIntake));
-    algaeIntake.setDefaultCommand(
-        Commands.run(
-            () -> {
-              algaeIntake.stop();
-            },
-            algaeIntake));
 
     // loading station (human player station)
-    operatorController
-        .a()
-        .whileTrue(new IntakePosition(elevator,coralElbow,coralWrist));
-    operatorController
-        .b()
-        .whileTrue(new L2(elevator,coralElbow,coralWrist));
-    operatorController
-        .x()
-        .whileTrue(new L3(elevator,coralElbow,coralWrist));
-    operatorController
-        .y()
-        .whileTrue(new L4(elevator, coralElbow, coralWrist));
+    operatorController.a().whileTrue(new IntakePosition(elevator, coralElbow, coralWrist));
+    operatorController.b().whileTrue(new L2(elevator, coralElbow, coralWrist));
+    operatorController.x().whileTrue(new L3(elevator, coralElbow, coralWrist));
+    operatorController.y().whileTrue(new L4(elevator, coralElbow, coralWrist));
 
     // stow position
     operatorController
@@ -352,15 +314,6 @@ public class RobotContainer {
 
     coralWrist.visualization.setLength(.2);
     coralElbow.visualization.append(coralWrist.visualization);
-
-    MechanismRoot2d algaeRoot = sideView.getRoot("Algae Root", 0.8, 0);
-    MechanismRoot2d climberRoot = sideView.getRoot("Climber Root", 1.5, 0);
-    climber.visualization.setLength(.3);
-    climberRoot.append(climber.visualization);
-    algaeArm.visualization.setLength(.2);
-    algaeArm.visualizationAngleOffset = () -> 90;
-    algaeArm.visualizationReversed = true;
-    algaeRoot.append(algaeArm.visualization);
 
     SmartDashboard.putData("Side View", sideView);
   }

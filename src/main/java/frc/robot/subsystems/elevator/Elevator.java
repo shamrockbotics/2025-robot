@@ -96,6 +96,10 @@ public class Elevator extends SubsystemBase {
     return inputs.currentHeightMeters;
   }
 
+  public double getHeightPercent() {
+    return ((inputs.currentHeightMeters - minHeightMeters) / (maxHeightMeters - minHeightMeters));
+  }
+
   /** Returns true if the arm height is within the allowed error of the target height. */
   public boolean onTarget() {
     return (Math.abs(inputs.currentHeightMeters - inputs.targetHeightMeters) <= allowedErrorMeters);
