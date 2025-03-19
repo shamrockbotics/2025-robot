@@ -16,6 +16,7 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -76,13 +77,16 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                // new VisionIOPhotonVision(camera1Name, robotToCamera1),
                 new VisionIOPhotonVision(camera2Name, robotToCamera2));
         coralElbow = new Arm(new CoralElbowConfig());
         coralWrist = new Arm(new CoralWristConfig());
         elevator = new Elevator(new ElevatorSpecificConfig());
         coralIntake = new Roller(new CoralIntakeConfig());
         climber = new Arm(new ClimberConfig());
+        NamedCommands.registerCommand(
+            "L4",
+            Commands.sequence(new L4(elevator, coralElbow, coralWrist), new Extake(coralIntake)));
         break;
 
       case SIM:
@@ -126,7 +130,7 @@ public class RobotContainer {
 
     climberServo = new Servo(0);
 
-    SmartDashboard.setDefaultBoolean("Field Oriented",  false);
+    SmartDashboard.setDefaultBoolean("Field Oriented", false);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -178,7 +182,7 @@ public class RobotContainer {
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
+    // Reset gyro to 0° when Y button is pressed
     controller
         .y()
         .onTrue(
@@ -328,6 +332,6 @@ public class RobotContainer {
   }
 
   private double heightLimitMultiplier() {
-    return 1.0 - (elevator.getHeightPercent() * 0.5);    
+    return 1.0 - (elevator.getHeightPercent() * 0.5);
   }
 }

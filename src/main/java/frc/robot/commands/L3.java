@@ -31,9 +31,9 @@ public class L3 extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevator.runToHeight(1.05); // raise height
+    elevator.runToHeight(1.00); // raise height
     coralElbow.runToAngle(-0.79); // -0.458 radians
-    coralWrist.runToAngle(-1.4); // -1.513 radians
+    coralWrist.runToAngle(-1.2); // -1.513 radians
   }
 
   // Called once the command ends or is interrupted.

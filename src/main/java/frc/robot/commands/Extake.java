@@ -5,23 +5,18 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.roller.Roller;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class L4 extends Command {
-  private Elevator elevator;
-  private Arm coralElbow;
-  private Arm coralWrist;
+public class Extake extends Command {
+  private Roller roller;
 
   /** Creates a new L4. */
-  public L4(Elevator elevator, Arm coralElbow, Arm coralWrist) {
-    this.elevator = elevator;
-    this.coralElbow = coralElbow;
-    this.coralWrist = coralWrist;
+  public Extake(Roller roller) {
+    this.roller = roller;
 
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(elevator, coralElbow, coralWrist);
+    addRequirements(roller);
   }
 
   // Called when the command is initially scheduled.
@@ -31,9 +26,7 @@ public class L4 extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevator.runToHeight(1.25);
-    coralElbow.runToAngle(-0.15); // lowered height by 50%
-    coralWrist.runToAngle(-1.3); // lower wrist
+    roller.run(-.3);
   }
 
   // Called once the command ends or is interrupted.
@@ -43,7 +36,6 @@ public class L4 extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // return elevator.onTarget() && coralWrist.onTarget() && coralElbow.onTarget();
     return false;
   }
 }
