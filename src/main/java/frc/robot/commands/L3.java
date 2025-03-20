@@ -43,6 +43,6 @@ public class L3 extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return elevator.onTarget() && coralWrist.onTarget() && coralElbow.onTarget();
+    return false;
   }
 }

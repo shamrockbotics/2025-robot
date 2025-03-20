@@ -49,10 +49,10 @@ public class RobotContainer {
   private final Vision vision;
   private final Arm coralElbow;
   private final Arm coralWrist;
+  private final Arm algaeArm;
+  private final Roller algaeIntake;
   private final Elevator elevator;
   private final Roller coralIntake;
-  private final Arm climber;
-  private final Servo climberServo;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -83,7 +83,8 @@ public class RobotContainer {
         coralWrist = new Arm(new CoralWristConfig());
         elevator = new Elevator(new ElevatorSpecificConfig());
         coralIntake = new Roller(new CoralIntakeConfig());
-        climber = new Arm(new ClimberConfig());
+        algaeArm = new Arm(new AlgaeArmConfig());
+        algaeIntake = new Roller(new AlgaeIntakeConfig());
         NamedCommands.registerCommand(
             "L4",
             Commands.sequence(new L4(elevator, coralElbow, coralWrist), new Extake(coralIntake)));
@@ -107,7 +108,8 @@ public class RobotContainer {
         coralWrist = new Arm(new CoralWristConfig(false));
         elevator = new Elevator(new ElevatorSpecificConfig(false));
         coralIntake = new Roller(new CoralIntakeConfig(false));
-        climber = new Arm(new ClimberConfig(false));
+        algaeArm = new Arm(new AlgaeArmConfig(false));
+        algaeIntake = new Roller(new AlgaeIntakeConfig(false));
         break;
 
       default:
@@ -124,11 +126,10 @@ public class RobotContainer {
         coralWrist = new Arm(new ArmConfig() {});
         elevator = new Elevator(new ElevatorConfig() {});
         coralIntake = new Roller(new CoralIntakeConfig() {});
-        climber = new Arm(new ClimberConfig() {});
+        algaeArm = new Arm(new AlgaeArmConfig() {});
+        algaeIntake = new Roller(new AlgaeIntakeConfig() {});
         break;
     }
-
-    climberServo = new Servo(0);
 
     SmartDashboard.setDefaultBoolean("Field Oriented", false);
 
@@ -212,19 +213,24 @@ public class RobotContainer {
               elevator.hold();
             },
             elevator));
-    climber.setDefaultCommand(
+    algaeArm.setDefaultCommand(
         Commands.run(
             () -> {
-              climber.stop();
-              climberServo.set(1.0);
+              algaeArm.hold();
             },
-            climber));
+            algaeArm));
     coralIntake.setDefaultCommand(
         Commands.run(
             () -> {
               coralIntake.stop();
             },
             coralIntake));
+    algaeIntake.setDefaultCommand(
+        Commands.run(
+            () -> {
+              algaeIntake.stop();
+            },
+            algaeIntake));
 
     // loading station (human player station)
     operatorController.a().whileTrue(new IntakePosition(elevator, coralElbow, coralWrist));
@@ -283,33 +289,46 @@ public class RobotContainer {
                   coralIntake.run(-0.3);
                 },
                 coralIntake));
-
-    // Climber controls
     controller
         .rightBumper()
         .whileTrue(
             Commands.run(
                 () -> {
-                  climber.run(0.4);
+                  algaeArm.run(.2);
                 },
-                climber));
+                algaeArm));
 
     controller
         .leftBumper()
         .whileTrue(
             Commands.run(
                 () -> {
-                  climber.run(-.2);
-                  climberServo.set(0.0);
+                  algaeArm.run(-.2);
                 },
-                climber));
+                algaeArm));
+    controller
+        .leftTrigger()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  algaeIntake.run(-.3);
+                },
+                algaeIntake));
+    controller
+        .rightTrigger()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  algaeIntake.run(.3);
+                },
+                algaeIntake));
   }
 
   private void configureVisualization() {
     Mechanism2d sideView = new Mechanism2d(2, 2);
 
     MechanismRoot2d elevatorRoot = sideView.getRoot("Elevator Root", 1.2, 0);
-
+    MechanismRoot2d algaeRoot = sideView.getRoot("Algae Root", 1.5, 0);
     elevator.visualization.setAngle(90);
     elevatorRoot.append(elevator.visualization);
 
@@ -318,6 +337,8 @@ public class RobotContainer {
 
     coralWrist.visualization.setLength(.2);
     coralElbow.visualization.append(coralWrist.visualization);
+    algaeArm.visualization.setLength(.1);
+    algaeRoot.append(algaeArm.visualization);
 
     SmartDashboard.putData("Side View", sideView);
   }
