@@ -48,7 +48,11 @@ public class Arm extends SubsystemBase {
     Logger.processInputs(this.getName(), inputs);
 
     if (!holding || DriverStation.isDisabled()) {
-      lastRunAngle = getAngle();
+      if (onTarget()) {
+        lastRunAngle = inputs.targetAngleRads;
+      } else {
+        lastRunAngle = inputs.currentAngleRads;
+      }
     }
 
     double visualizationAngle =
