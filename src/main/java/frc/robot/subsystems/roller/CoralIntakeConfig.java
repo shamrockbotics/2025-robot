@@ -7,6 +7,8 @@ public class CoralIntakeConfig extends RollerConfig {
 
   public CoralIntakeConfig(boolean real) {
     name = "Coral Intake";
+    intakePercent = 0.3;
+    releasePercent = 0.3;
     if (real) {
       io = new RollerIOSparkMax(17, false, false, 2 * Math.PI, 2 * Math.PI / 60, 40, 0.5, 0.0);
     } else {

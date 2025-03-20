@@ -8,6 +8,7 @@ public interface ElevatorIO {
     public boolean connected = false;
     public double targetHeightMeters = 0.0;
     public double currentHeightMeters = 0.0;
+    public boolean onTarget = false;
     public double velocityMetersPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;

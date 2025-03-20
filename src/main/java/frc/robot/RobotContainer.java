@@ -18,7 +18,6 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -34,6 +33,7 @@ import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.*;
 import frc.robot.subsystems.roller.*;
 import frc.robot.subsystems.vision.*;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -52,6 +52,7 @@ public class RobotContainer {
   private final Roller algaeIntake;
   private final Elevator elevator;
   private final Roller coralIntake;
+  private final CoralCommands coralCommands;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -84,9 +85,6 @@ public class RobotContainer {
         coralIntake = new Roller(new CoralIntakeConfig());
         algaeArm = new Arm(new AlgaeArmConfig());
         algaeIntake = new Roller(new AlgaeIntakeConfig());
-        NamedCommands.registerCommand(
-            "L4",
-            Commands.sequence(new L4(elevator, coralElbow, coralWrist), new Extake(coralIntake)));
         break;
 
       case SIM:
@@ -130,6 +128,16 @@ public class RobotContainer {
         break;
     }
 
+    coralCommands = new CoralCommands(elevator, coralElbow, coralWrist, coralIntake);
+
+    NamedCommands.registerCommand("L1", coralCommands.l1());
+    NamedCommands.registerCommand("L2", coralCommands.l2());
+    NamedCommands.registerCommand("L3", coralCommands.l3());
+    NamedCommands.registerCommand("L4", coralCommands.l4());
+    NamedCommands.registerCommand("Coral Station", coralCommands.coralStation());
+    NamedCommands.registerCommand("Intake", coralCommands.intake());
+    NamedCommands.registerCommand("Release", coralCommands.release());
+
     SmartDashboard.setDefaultBoolean("Field Oriented", false);
 
     // Set up auto routines
@@ -137,6 +145,7 @@ public class RobotContainer {
 
     autoChooser.addOption(
         "Leave Start", DriveCommands.joystickDrive(drive, () -> 0.2, () -> 0, () -> 0));
+
     // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
@@ -153,8 +162,8 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    UsbCamera climberCamera = CameraServer.startAutomaticCapture(0);
-    UsbCamera coralCamera = CameraServer.startAutomaticCapture(1);
+    CameraServer.startAutomaticCapture("Front Driver Camera", 0);
+    CameraServer.startAutomaticCapture("Coral Camera", 1);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -193,134 +202,25 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // Default arm command, hold in position
-    coralElbow.setDefaultCommand(
-        Commands.run(
-            () -> {
-              coralElbow.hold();
-            },
-            coralElbow));
-    coralWrist.setDefaultCommand(
-        Commands.run(
-            () -> {
-              coralWrist.hold();
-            },
-            coralWrist));
-    elevator.setDefaultCommand(
-        Commands.run(
-            () -> {
-              elevator.hold();
-            },
-            elevator));
-    algaeArm.setDefaultCommand(
-        Commands.run(
-            () -> {
-              algaeArm.hold();
-            },
-            algaeArm));
-    coralIntake.setDefaultCommand(
-        Commands.run(
-            () -> {
-              coralIntake.stop();
-            },
-            coralIntake));
-    algaeIntake.setDefaultCommand(
-        Commands.run(
-            () -> {
-              algaeIntake.stop();
-            },
-            algaeIntake));
+    // coral subsystem control
+    operatorController.a().whileTrue(coralCommands.coralStation());
+    operatorController.b().whileTrue(coralCommands.l2());
+    operatorController.x().whileTrue(coralCommands.l3());
+    operatorController.y().whileTrue(coralCommands.l4());
+    operatorController.start().onTrue(coralCommands.stow());
+    operatorController.rightTrigger().whileTrue(coralCommands.intake());
+    operatorController.leftTrigger().whileTrue(coralCommands.release());
+    DoubleSupplier manualLeft = () -> -operatorController.getLeftY() * 0.5;
+    DoubleSupplier manualRight = () -> -operatorController.getRightY() * 0.5;
+    operatorController.back().whileTrue(elevator.runPercentCommand(manualRight));
+    operatorController.rightBumper().whileTrue(coralElbow.runPercentCommand(manualRight));
+    operatorController.leftBumper().whileTrue(coralWrist.runPercentCommand(manualLeft));
 
-    // loading station (human player station)
-    operatorController.a().whileTrue(new IntakePosition(elevator, coralElbow, coralWrist));
-    operatorController.b().whileTrue(new L2(elevator, coralElbow, coralWrist));
-    operatorController.x().whileTrue(new L3(elevator, coralElbow, coralWrist));
-    operatorController.y().whileTrue(new L4(elevator, coralElbow, coralWrist));
-
-    // stow position
-    operatorController
-        .start()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  elevator.runToHeight(0);
-                  coralElbow.runToAngle(0);
-                  coralWrist.runToAngle(-0.6);
-                },
-                elevator,
-                coralElbow,
-                coralWrist));
-
-    // coral elbow manual control
-    operatorController
-        .rightBumper()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  coralElbow.run(-operatorController.getRightY() * 0.5);
-                },
-                coralElbow));
-
-    // coral wrist manual control
-    operatorController
-        .leftBumper()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  coralWrist.run(-operatorController.getLeftY() * 0.5);
-                },
-                coralWrist));
-
-    // Coral intake control
-    operatorController
-        .rightTrigger()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  coralIntake.run(0.3);
-                },
-                coralIntake));
-    operatorController
-        .leftTrigger()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  coralIntake.run(-0.3);
-                },
-                coralIntake));
-    controller
-        .rightBumper()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  algaeArm.run(.2);
-                },
-                algaeArm));
-
-    controller
-        .leftBumper()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  algaeArm.run(-.2);
-                },
-                algaeArm));
-    controller
-        .leftTrigger()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  algaeIntake.run(-.3);
-                },
-                algaeIntake));
-    controller
-        .rightTrigger()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  algaeIntake.run(.3);
-                },
-                algaeIntake));
+    // algae subsystem control
+    controller.rightBumper().whileTrue(algaeArm.runPercentCommand(() -> 0.2));
+    controller.leftBumper().whileTrue(algaeArm.runPercentCommand(() -> -0.2));
+    controller.rightTrigger().whileTrue(algaeIntake.intakeCommand());
+    controller.leftTrigger().whileTrue(algaeIntake.releaseCommand());
   }
 
   private void configureVisualization() {

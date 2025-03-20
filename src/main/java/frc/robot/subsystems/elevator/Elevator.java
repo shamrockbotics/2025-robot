@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
@@ -19,6 +20,7 @@ public class Elevator extends SubsystemBase {
   private final Alert disconnectedAlert;
 
   private boolean holding = false;
+  private double setpoint = 0.0;
   private double lastRunHeight = 0.0;
 
   public MechanismLigament2d visualization;
@@ -36,6 +38,8 @@ public class Elevator extends SubsystemBase {
 
     visualization = new MechanismLigament2d(getName(), 1, lastRunHeight);
 
+    setDefaultCommand(holdCommand());
+
     SmartDashboard.putData(this);
   }
 
@@ -43,12 +47,13 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(this.getName(), inputs);
+    inputs.onTarget = (Math.abs(getHeight() - setpoint) <= allowedErrorMeters);
 
     if (!holding || DriverStation.isDisabled()) {
       if (onTarget()) {
-        lastRunHeight = inputs.targetHeightMeters;
+        lastRunHeight = setpoint;
       } else {
-        lastRunHeight = inputs.currentHeightMeters;
+        lastRunHeight = getHeight();
       }
     }
 
@@ -63,6 +68,8 @@ public class Elevator extends SubsystemBase {
    * @param height Height in meters
    */
   public void runToHeight(double height) {
+    if (holding) inputs.onTarget = false;
+    setpoint = height;
     holding = false;
     io.setPosition(height);
   }
@@ -106,6 +113,19 @@ public class Elevator extends SubsystemBase {
 
   /** Returns true if the arm height is within the allowed error of the target height. */
   public boolean onTarget() {
-    return (Math.abs(inputs.currentHeightMeters - inputs.targetHeightMeters) <= allowedErrorMeters);
+    return inputs.onTarget;
+  }
+
+  public Command runToPositionCommand(double position) {
+    return run(() -> runToHeight(position)).withName("Run To Position " + position);
+  }
+
+  public Command holdCommand() {
+    return run(() -> hold()).withName("Hold");
+  }
+
+  public Command runPercentCommand(DoubleSupplier valueSupplier) {
+    double value = valueSupplier.getAsDouble();
+    return run(() -> run(value)).withName("Run Percent " + value);
   }
 }

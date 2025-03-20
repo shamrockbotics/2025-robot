@@ -2,18 +2,28 @@ package frc.robot.subsystems.roller;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Roller extends SubsystemBase {
   private final RollerIO io;
   private final RollerIOInputsAutoLogged inputs = new RollerIOInputsAutoLogged();
 
+  private final double intakePercent;
+  private final double releasePercent;
+
   private final Alert disconnectedAlert;
 
   public Roller(RollerConfig config) {
     setName(config.name);
     io = config.io;
+
+    this.intakePercent = config.intakePercent;
+    this.releasePercent = config.releasePercent;
+
+    setDefaultCommand(run(() -> stop()));
 
     disconnectedAlert = new Alert(getName() + " disconnected.", AlertType.kError);
   }
@@ -61,5 +71,22 @@ public class Roller extends SubsystemBase {
   /** Returns true if the arm angle is within the allowed error of the target angle. */
   public boolean hasObject() {
     return inputs.hasObject;
+  }
+
+  public Command runPercentCommand(DoubleSupplier valueSupplier) {
+    double value = valueSupplier.getAsDouble();
+    return run(() -> run(value)).withName("Run Percent " + value);
+  }
+
+  public Command stopCommand() {
+    return run(() -> stop()).withName("Stop");
+  }
+
+  public Command intakeCommand() {
+    return run(() -> run(intakePercent)).withName("Intake");
+  }
+
+  public Command releaseCommand() {
+    return run(() -> run(-releasePercent)).withName("Release");
   }
 }

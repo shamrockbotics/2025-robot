@@ -8,6 +8,7 @@ public interface ArmIO {
     public boolean connected = false;
     public double targetAngleRads = 0.0;
     public double currentAngleRads = 0.0;
+    public boolean onTarget = false;
     public double velocityRadsPerSec = 0.0;
     public double appliedVolts = 0.0;
     public double currentAmps = 0.0;
