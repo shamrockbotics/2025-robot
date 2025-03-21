@@ -14,10 +14,11 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
+import frc.robot.subsystems.MechanismIO;
 import java.util.function.DoubleSupplier;
 
-public class ArmIOSparkMax implements ArmIO {
-  private final double zeroOffsetRads;
+public class ArmIOSparkMax implements MechanismIO {
+  private final double zeroOffset;
 
   // Hardware objects
   private final SparkMax spark;
@@ -35,7 +36,7 @@ public class ArmIOSparkMax implements ArmIO {
   public ArmIOSparkMax(
       int id1,
       int id2,
-      double zeroOffsetRads,
+      double zeroOffset,
       boolean motorInverted,
       boolean encoderInverted,
       double encoderPositionFactor,
@@ -46,7 +47,7 @@ public class ArmIOSparkMax implements ArmIO {
       double positionKd) {
     this(
         id1,
-        zeroOffsetRads,
+        zeroOffset,
         motorInverted,
         encoderInverted,
         encoderPositionFactor,
@@ -74,7 +75,7 @@ public class ArmIOSparkMax implements ArmIO {
 
   public ArmIOSparkMax(
       int id,
-      double zeroOffsetRads,
+      double zeroOffset,
       boolean motorInverted,
       boolean encoderInverted,
       double encoderPositionFactor,
@@ -83,7 +84,7 @@ public class ArmIOSparkMax implements ArmIO {
       double voltageLimit,
       double positionKp,
       double positionKd) {
-    this.zeroOffsetRads = zeroOffsetRads;
+    this.zeroOffset = zeroOffset;
     maxVoltage = voltageLimit;
     spark = new SparkMax(id, MotorType.kBrushless);
     encoder = spark.getAbsoluteEncoder();
@@ -94,7 +95,7 @@ public class ArmIOSparkMax implements ArmIO {
         .inverted(motorInverted)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(currentLimit)
-        .voltageCompensation(voltageLimit);
+        .voltageCompensation(maxVoltage);
     sparkConfig
         .absoluteEncoder
         .inverted(encoderInverted)
@@ -125,28 +126,27 @@ public class ArmIOSparkMax implements ArmIO {
   }
 
   @Override
-  public void updateInputs(ArmIOInputs inputs) {
+  public void updateInputs(MechanismIOInputs inputs) {
     // Update inputs
     sparkStickyFault = false;
     ifOk(
         spark,
         encoder::getPosition,
         (value) ->
-            inputs.currentAngleRads =
-                MathUtil.inputModulus(value - zeroOffsetRads, -Math.PI, Math.PI));
-    ifOk(spark, encoder::getVelocity, (value) -> inputs.velocityRadsPerSec = value);
+            inputs.currentPosition = MathUtil.inputModulus(value - zeroOffset, -Math.PI, Math.PI));
+    ifOk(spark, encoder::getVelocity, (value) -> inputs.velocity = value);
     ifOk(
         spark,
         new DoubleSupplier[] {spark::getAppliedOutput, spark::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(spark, spark::getOutputCurrent, (value) -> inputs.currentAmps = value);
-    inputs.targetAngleRads = MathUtil.inputModulus(setpoint - zeroOffsetRads, -Math.PI, Math.PI);
+    inputs.targetPosition = MathUtil.inputModulus(setpoint - zeroOffset, -Math.PI, Math.PI);
     inputs.connected = connectedDebounce.calculate(!sparkStickyFault);
   }
 
   @Override
   public void setPosition(double angleRads) {
-    setpoint = MathUtil.inputModulus(angleRads + zeroOffsetRads, 0, 2 * Math.PI);
+    setpoint = MathUtil.inputModulus(angleRads + zeroOffset, 0, 2 * Math.PI);
     controller.setReference(setpoint, ControlType.kPosition);
   }
 

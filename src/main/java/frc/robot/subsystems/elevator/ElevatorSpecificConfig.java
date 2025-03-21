@@ -1,15 +1,17 @@
 package frc.robot.subsystems.elevator;
 
-public class ElevatorSpecificConfig extends ElevatorConfig {
+import frc.robot.subsystems.MechanismConfig;
+
+public class ElevatorSpecificConfig extends MechanismConfig {
   public ElevatorSpecificConfig() {
     this(true);
   }
 
   public ElevatorSpecificConfig(boolean real) {
     name = "Elevator";
-    minHeightMeters = 0;
-    maxHeightMeters = 1.3;
-    allowedErrorMeters = 0.02;
+    minPosition = 0;
+    maxPosition = 1.3;
+    allowedError = 0.02;
     if (real) {
       io =
           new ElevatorIOSparkMax(
@@ -23,9 +25,7 @@ public class ElevatorSpecificConfig extends ElevatorConfig {
               10.0,
               0.0);
     } else {
-      io =
-          new ElevatorIOSim(
-              minHeightMeters, maxHeightMeters, 200, (2.0 * Math.PI / 4096), 1.0, 1.0);
+      io = new ElevatorIOSim(minPosition, maxPosition, 200, (2.0 * Math.PI / 4096), 1.0, 1.0);
     }
   }
 }

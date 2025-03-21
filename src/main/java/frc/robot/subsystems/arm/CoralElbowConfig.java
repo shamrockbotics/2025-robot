@@ -1,23 +1,24 @@
 package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.MechanismConfig;
 
-public class CoralElbowConfig extends ArmConfig {
+public class CoralElbowConfig extends MechanismConfig {
   public CoralElbowConfig() {
     this(true);
   }
 
   public CoralElbowConfig(boolean real) {
     name = "Coral Elbow";
-    minAngleRads = -2.4;
-    maxAngleRads = 0.05;
-    allowedErrorRads = Units.degreesToRadians(2);
+    minPosition = -2.4;
+    maxPosition = 0.05;
+    allowedError = Units.degreesToRadians(2);
     if (real) {
       io =
           new ArmIOSparkMax(
               13, 3.05, false, true, 2 * Math.PI, 2 * Math.PI / 60, 40, 6.0, 2.0, 0.0);
     } else {
-      io = new ArmIOSim(minAngleRads, maxAngleRads, 200, (2.0 * Math.PI / 4096), 1.0, 1.0);
+      io = new ArmIOSim(minPosition, maxPosition, 200, (2.0 * Math.PI / 4096), 1.0, 1.0);
     }
   }
 }

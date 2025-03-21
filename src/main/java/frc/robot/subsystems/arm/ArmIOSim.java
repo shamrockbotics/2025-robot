@@ -8,8 +8,9 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.robot.subsystems.MechanismIO;
 
-public class ArmIOSim implements ArmIO {
+public class ArmIOSim implements MechanismIO {
   private final SingleJointedArmSim armSim;
   private final DCMotorSim motorSim;
   private static int encoderPort = 0;
@@ -25,8 +26,8 @@ public class ArmIOSim implements ArmIO {
   double maxVoltage = 12.0;
 
   public ArmIOSim(
-      double minAngleRads,
-      double maxAngleRads,
+      double minPosition,
+      double maxPosition,
       double gearReduction,
       double radsPerPulse,
       double lengthMeters,
@@ -38,8 +39,8 @@ public class ArmIOSim implements ArmIO {
             gearReduction,
             moi,
             lengthMeters,
-            minAngleRads,
-            maxAngleRads,
+            minPosition,
+            maxPosition,
             false,
             0,
             radsPerPulse,
@@ -50,7 +51,7 @@ public class ArmIOSim implements ArmIO {
   }
 
   @Override
-  public void updateInputs(ArmIOInputs inputs) {
+  public void updateInputs(MechanismIOInputs inputs) {
 
     if (closedLoop) {
       appliedVolts = controller.calculate(encoder.getDistance());
@@ -70,9 +71,9 @@ public class ArmIOSim implements ArmIO {
     encoderSim.setDistance(armSim.getAngleRads());
 
     inputs.connected = true;
-    inputs.targetAngleRads = controller.getSetpoint();
-    inputs.currentAngleRads = encoder.getDistance();
-    inputs.velocityRadsPerSec = armSim.getVelocityRadPerSec();
+    inputs.targetPosition = controller.getSetpoint();
+    inputs.currentPosition = encoder.getDistance();
+    inputs.velocity = armSim.getVelocityRadPerSec();
     inputs.appliedVolts = appliedVolts;
     inputs.currentAmps = armSim.getCurrentDrawAmps();
   }

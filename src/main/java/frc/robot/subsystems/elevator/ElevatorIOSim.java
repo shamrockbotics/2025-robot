@@ -8,8 +8,9 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.robot.subsystems.MechanismIO;
 
-public class ElevatorIOSim implements ElevatorIO {
+public class ElevatorIOSim implements MechanismIO {
   private final SingleJointedArmSim armSim;
   private final DCMotorSim motorSim;
   private static int encoderPort = 9;
@@ -22,9 +23,11 @@ public class ElevatorIOSim implements ElevatorIO {
   private boolean closedLoop = false;
   private double appliedVolts = 0.0;
 
+  double maxVoltage = 12.0;
+
   public ElevatorIOSim(
-      double minAngleRads,
-      double maxAngleRads,
+      double minPosition,
+      double maxPosition,
       double gearReduction,
       double radsPerPulse,
       double lengthMeters,
@@ -36,8 +39,8 @@ public class ElevatorIOSim implements ElevatorIO {
             gearReduction,
             moi,
             lengthMeters,
-            minAngleRads,
-            maxAngleRads,
+            minPosition,
+            maxPosition,
             false,
             0,
             radsPerPulse,
@@ -48,7 +51,7 @@ public class ElevatorIOSim implements ElevatorIO {
   }
 
   @Override
-  public void updateInputs(ElevatorIOInputs inputs) {
+  public void updateInputs(MechanismIOInputs inputs) {
 
     if (closedLoop) {
       appliedVolts = controller.calculate(encoder.getDistance());
@@ -68,9 +71,9 @@ public class ElevatorIOSim implements ElevatorIO {
     encoderSim.setDistance(armSim.getAngleRads());
 
     inputs.connected = true;
-    inputs.targetHeightMeters = controller.getSetpoint();
-    inputs.currentHeightMeters = encoder.getDistance();
-    inputs.velocityMetersPerSec = armSim.getVelocityRadPerSec();
+    inputs.targetPosition = controller.getSetpoint();
+    inputs.currentPosition = encoder.getDistance();
+    inputs.velocity = armSim.getVelocityRadPerSec();
     inputs.appliedVolts = appliedVolts;
     inputs.currentAmps = armSim.getCurrentDrawAmps();
   }

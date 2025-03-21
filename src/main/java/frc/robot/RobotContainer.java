@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
+import frc.robot.subsystems.MechanismConfig;
 import frc.robot.subsystems.arm.*;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.elevator.*;
@@ -119,12 +120,12 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        coralElbow = new Arm(new ArmConfig() {});
-        coralWrist = new Arm(new ArmConfig() {});
-        elevator = new Elevator(new ElevatorConfig() {});
-        coralIntake = new Roller(new CoralIntakeConfig() {});
-        algaeArm = new Arm(new AlgaeArmConfig() {});
-        algaeIntake = new Roller(new AlgaeIntakeConfig() {});
+        coralElbow = new Arm(new MechanismConfig() {});
+        coralWrist = new Arm(new MechanismConfig() {});
+        elevator = new Elevator(new MechanismConfig() {});
+        coralIntake = new Roller(new RollerConfig() {});
+        algaeArm = new Arm(new MechanismConfig() {});
+        algaeIntake = new Roller(new RollerConfig() {});
         break;
     }
 
@@ -252,6 +253,6 @@ public class RobotContainer {
   }
 
   private double heightLimitMultiplier() {
-    return 1.0 - (elevator.getHeightPercent() * 0.5);
+    return 1.0 - (elevator.getPositionPercent() * 0.5);
   }
 }

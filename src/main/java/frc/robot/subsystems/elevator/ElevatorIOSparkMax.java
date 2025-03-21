@@ -13,9 +13,10 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.filter.Debouncer;
+import frc.robot.subsystems.MechanismIO;
 import java.util.function.DoubleSupplier;
 
-public class ElevatorIOSparkMax implements ElevatorIO {
+public class ElevatorIOSparkMax implements MechanismIO {
   // Hardware objects
   private final SparkMax spark;
   private final RelativeEncoder encoder;
@@ -26,6 +27,8 @@ public class ElevatorIOSparkMax implements ElevatorIO {
 
   // Connection debouncers
   private final Debouncer connectedDebounce = new Debouncer(0.5);
+
+  double maxVoltage = 12.0;
 
   public ElevatorIOSparkMax(
       int id1,
@@ -112,19 +115,19 @@ public class ElevatorIOSparkMax implements ElevatorIO {
   }
 
   @Override
-  public void updateInputs(ElevatorIOInputs inputs) {
+  public void updateInputs(MechanismIOInputs inputs) {
     if (encoder.getPosition() < 0.0) encoder.setPosition(0.0);
 
     // Update inputs
     sparkStickyFault = false;
-    ifOk(spark, encoder::getPosition, (value) -> inputs.currentHeightMeters = value);
-    ifOk(spark, encoder::getVelocity, (value) -> inputs.velocityMetersPerSec = value);
+    ifOk(spark, encoder::getPosition, (value) -> inputs.currentPosition = value);
+    ifOk(spark, encoder::getVelocity, (value) -> inputs.velocity = value);
     ifOk(
         spark,
         new DoubleSupplier[] {spark::getAppliedOutput, spark::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
     ifOk(spark, spark::getOutputCurrent, (value) -> inputs.currentAmps = value);
-    inputs.targetHeightMeters = setpoint;
+    inputs.targetPosition = setpoint;
     inputs.connected = connectedDebounce.calculate(!sparkStickyFault);
   }
 
