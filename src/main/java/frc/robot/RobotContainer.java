@@ -320,7 +320,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  algaeIntake.run(.3);
+                  algaeIntake.run(.6);
                 },
                 algaeIntake));
   }
