@@ -142,7 +142,7 @@ public class RobotContainer {
         DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0).withTimeout(5.0));
     autoChooser.addOption(
         "L4 Timed Auto",
-        DriveCommands.joystickDrive(drive, () -> 0.2, () -> 0, () -> 0)
+        DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0)
             .withTimeout(4.0)
             .andThen(
                 DriveCommands.joystickDrive(drive, () -> -0.2, () -> 0, () -> 0).withTimeout(0.5))
