@@ -144,7 +144,6 @@ public class RobotContainer {
         "L4 Timed Auto",
         Commands.sequence(
             DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0).withTimeout(6.0),
-            DriveCommands.joystickDrive(drive, () -> -0.2, () -> 0, () -> 0).withTimeout(0.5),
             new L4(elevator, coralElbow, coralWrist).withTimeout(2.0),
             new Extake(coralIntake).withTimeout(2.0)));
 
