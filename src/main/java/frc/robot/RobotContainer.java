@@ -290,6 +290,7 @@ public class RobotContainer {
                   coralIntake.run(-0.3);
                 },
                 coralIntake));
+
     controller
         .rightBumper()
         .whileTrue(
@@ -307,6 +308,11 @@ public class RobotContainer {
                   algaeArm.run(-.2);
                 },
                 algaeArm));
+    controller.start().whileTrue(Commands.run(
+      () -> {
+        algaeArm.runToAngle(0.2);
+      },
+      algaeArm));
     controller
         .leftTrigger()
         .whileTrue(
