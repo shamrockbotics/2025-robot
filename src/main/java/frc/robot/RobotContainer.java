@@ -138,7 +138,12 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     autoChooser.addOption(
-        "Leave Start", DriveCommands.joystickDrive(drive, () -> 0.2, () -> 0, () -> 0));
+        "Leave Start", DriveCommands.joystickDrive(drive, () -> 0.4, () -> 0, () -> 0).withTimeout(5.0));
+    autoChooser.addOption("L4 Timed Auto", DriveCommands.joystickDrive(drive, () -> 0.2, () -> 0, () -> 0).withTimeout(4.0)
+      .andThen(DriveCommands.joystickDrive(drive, () -> -0.2, () -> 0, () -> 0).withTimeout(0.5))
+      .andThen(new L4(elevator, coralElbow, coralWrist).withTimeout(2.0))
+      .andThen(new Extake(coralIntake)).withTimeout(2.0));
+
     // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
@@ -309,7 +314,7 @@ public class RobotContainer {
                 },
                 algaeArm));
     controller
-        .start()
+        .a()
         .whileTrue(
             Commands.run(
                 () -> {
