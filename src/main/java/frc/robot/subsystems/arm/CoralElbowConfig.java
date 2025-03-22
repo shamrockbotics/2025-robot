@@ -10,7 +10,7 @@ public class CoralElbowConfig extends ArmConfig {
   public CoralElbowConfig(boolean real) {
     name = "Coral Elbow";
     minAngleRads = -2.4;
-    maxAngleRads = 0.25;
+    maxAngleRads = 0.05;
     allowedErrorRads = Units.degreesToRadians(2);
     if (real) {
       io =
