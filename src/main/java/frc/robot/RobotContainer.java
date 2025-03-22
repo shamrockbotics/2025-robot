@@ -139,7 +139,7 @@ public class RobotContainer {
 
     autoChooser.addOption(
         "Leave Start",
-        DriveCommands.joystickDrive(drive, () -> 0.4, () -> 0, () -> 0).withTimeout(5.0));
+        DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0).withTimeout(5.0));
     autoChooser.addOption(
         "L4 Timed Auto",
         DriveCommands.joystickDrive(drive, () -> 0.2, () -> 0, () -> 0)
