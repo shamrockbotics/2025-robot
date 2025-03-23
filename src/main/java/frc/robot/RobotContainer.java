@@ -146,6 +146,12 @@ public class RobotContainer {
             DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0).withTimeout(6.0),
             new L4(elevator, coralElbow, coralWrist).withTimeout(2.0),
             new Extake(coralIntake).withTimeout(2.0)));
+    autoChooser.addOption(
+        "L1 Timed Auto",
+        Commands.sequence(
+            DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0).withTimeout(8.0),
+            new IntakePosition(elevator, coralElbow, coralWrist).withTimeout(2.0),
+            new Extake(coralIntake).withTimeout(2.0)));
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -163,8 +169,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    UsbCamera climberCamera = CameraServer.startAutomaticCapture(0);
-    UsbCamera coralCamera = CameraServer.startAutomaticCapture(1);
+    UsbCamera coralCamera = CameraServer.startAutomaticCapture(0);
 
     // Configure the button bindings
     configureButtonBindings();

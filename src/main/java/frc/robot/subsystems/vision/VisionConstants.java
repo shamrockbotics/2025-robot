@@ -14,6 +14,7 @@
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
@@ -21,14 +22,13 @@ import edu.wpi.first.wpilibj.Filesystem;
 
 public class VisionConstants {
   // AprilTag layout
-  // public static AprilTagFieldLayout aprilTagLayout =
-  //  AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+  public static AprilTagFieldLayout aprilTagLayout =
+  AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
   // Camera names, must match names configured on coprocessor
   public static String camera0Name = "back_camera";
   public static String camera1Name = "front_left_camera";
   public static String camera2Name = "front_right_camera";
-  public static AprilTagFieldLayout aprilTagLayout;
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
@@ -83,7 +83,7 @@ public class VisionConstants {
 
       System.out.println("Path: " + jsonFilePath);
 
-      aprilTagLayout = new AprilTagFieldLayout(jsonFilePath);
+      //aprilTagLayout = new AprilTagFieldLayout(jsonFilePath);
 
       System.out.println("AprilTag layout loaded successfully.");
     } catch (Exception e) {
