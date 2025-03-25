@@ -82,7 +82,7 @@ public class RobotContainer {
                 new VisionIOPhotonVision(camera2Name, robotToCamera2));
         coralElbow = new Arm(new CoralElbowConfig());
         coralWrist = new Arm(new CoralWristConfig());
-        elevator = new Elevator(new ElevatorSpecificConfig());
+        elevator = new Elevator(new ElevatorConfig());
         coralIntake = new Roller(new CoralIntakeConfig());
         algaeArm = new Arm(new AlgaeArmConfig());
         algaeIntake = new Roller(new AlgaeIntakeConfig());
@@ -106,7 +106,7 @@ public class RobotContainer {
 
         coralElbow = new Arm(new CoralElbowConfig(false));
         coralWrist = new Arm(new CoralWristConfig(false));
-        elevator = new Elevator(new ElevatorSpecificConfig(false));
+        elevator = new Elevator(new ElevatorConfig(false));
         coralIntake = new Roller(new CoralIntakeConfig(false));
         algaeArm = new Arm(new AlgaeArmConfig(false));
         algaeIntake = new Roller(new AlgaeIntakeConfig(false));

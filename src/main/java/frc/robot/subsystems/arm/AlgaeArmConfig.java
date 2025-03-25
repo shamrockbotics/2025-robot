@@ -2,6 +2,7 @@ package frc.robot.subsystems.arm;
 
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.MechanismConfig;
+import frc.robot.subsystems.MechanismIOSim;
 
 public class AlgaeArmConfig extends MechanismConfig {
   public AlgaeArmConfig() {
@@ -18,7 +19,7 @@ public class AlgaeArmConfig extends MechanismConfig {
           new ArmIOSparkMax(
               15, 3.08, false, true, 2 * Math.PI, 2 * Math.PI / 60, 40, 12.0, 0.5, 0.0);
     } else {
-      io = new ArmIOSim(minPosition, maxPosition, 200, (2.0 * Math.PI / 4096), 1.0, 1.0);
+      io = new MechanismIOSim(minPosition, maxPosition, 200, (2.0 * Math.PI / 4096), 1.0, 1.0);
     }
   }
 }
