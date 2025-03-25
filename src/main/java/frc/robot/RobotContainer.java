@@ -33,6 +33,7 @@ import frc.robot.subsystems.roller.*;
 import frc.robot.subsystems.vision.*;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -58,6 +59,7 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+  private final LoggedNetworkBoolean fieldOriented;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -138,7 +140,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake", coralCommands.intake());
     NamedCommands.registerCommand("Release", coralCommands.release());
 
-    SmartDashboard.setDefaultBoolean("Field Oriented", false);
+    fieldOriented = new LoggedNetworkBoolean("/SmartDashboard/Field Oriented", false);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -176,7 +178,7 @@ public class RobotContainer {
             () -> -controller.getLeftY() * heightLimitMultiplier(),
             () -> -controller.getLeftX() * heightLimitMultiplier(),
             () -> -controller.getRightX() * heightLimitMultiplier(),
-            SmartDashboard.getBoolean("Field Oriented", false)));
+            fieldOriented.get()));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

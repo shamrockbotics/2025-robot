@@ -1,6 +1,6 @@
 {
   "version": 1.0,
-  "grid_size": 128,
+  "grid_size": 64,
   "tabs": [
     {
       "name": "Match",
@@ -15,7 +15,7 @@
             "height": 384.0,
             "type": "Camera Stream",
             "properties": {
-              "topic": "/CameraPublisher/Coral Camera",
+              "topic": "/CameraPublisher/USB Camera 1",
               "period": 0.06
             }
           },
