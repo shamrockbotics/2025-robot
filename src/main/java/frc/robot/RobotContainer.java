@@ -200,6 +200,8 @@ public class RobotContainer {
     operatorController.start().onTrue(coralCommands.stow());
     operatorController.rightTrigger().whileTrue(coralCommands.intake());
     operatorController.leftTrigger().whileTrue(coralCommands.release());
+
+    // coral subsystem manual control
     DoubleSupplier manualLeft = () -> -operatorController.getLeftY() * 0.5;
     DoubleSupplier manualRight = () -> -operatorController.getRightY() * 0.5;
     operatorController.back().whileTrue(elevator.runPercentCommand(manualRight));

@@ -5,6 +5,7 @@ import static frc.robot.util.SparkUtil.*;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -14,6 +15,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.Voltage;
 import java.util.function.DoubleSupplier;
@@ -26,6 +29,8 @@ public class MechanismIOSparkMax implements MechanismIO {
 
   // Closed loop controllers
   private final SparkClosedLoopController controller;
+  private ArmFeedforward armFeedforward = null;
+  private ElevatorFeedforward elevatorFeedforward = null;
   private double setpoint = 0.0;
 
   // Connection debouncers
@@ -157,6 +162,16 @@ public class MechanismIOSparkMax implements MechanismIO {
     return this;
   }
 
+  public MechanismIOSparkMax addFeedforward(ArmFeedforward feedforward) {
+    this.armFeedforward = feedforward;
+    return this;
+  }
+
+  public MechanismIOSparkMax addFeedforward(ElevatorFeedforward feedforward) {
+    this.elevatorFeedforward = feedforward;
+    return this;
+  }
+
   @Override
   public void updateInputs(MechanismIOInputs inputs) {
     // Update inputs
@@ -181,7 +196,8 @@ public class MechanismIOSparkMax implements MechanismIO {
   @Override
   public void setPosition(double position) {
     setpoint = position;
-    controller.setReference(setpoint, ControlType.kPosition);
+    controller.setReference(
+        setpoint, ControlType.kPosition, ClosedLoopSlot.kSlot0, calculateFeedforward(setpoint));
   }
 
   @Override
@@ -192,5 +208,17 @@ public class MechanismIOSparkMax implements MechanismIO {
   @Override
   public void setVoltage(Voltage voltage) {
     spark.setVoltage(voltage.in(Volts));
+  }
+
+  private double calculateFeedforward(double setpoint) {
+    double feedforwardValue = 0.0;
+
+    if (armFeedforward != null && absoluteEncoder != null) {
+      feedforwardValue = armFeedforward.calculate(setpoint, 0);
+    } else if (elevatorFeedforward != null && relativeEncoder != null) {
+      feedforwardValue = elevatorFeedforward.calculate(0);
+    }
+
+    return feedforwardValue;
   }
 }
