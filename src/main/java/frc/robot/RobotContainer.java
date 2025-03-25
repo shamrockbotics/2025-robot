@@ -221,16 +221,18 @@ public class RobotContainer {
     Mechanism2d sideView = new Mechanism2d(2, 2);
 
     MechanismRoot2d elevatorRoot = sideView.getRoot("Elevator Root", 1.2, 0);
-    MechanismRoot2d algaeRoot = sideView.getRoot("Algae Root", 1.5, 0);
     elevator.visualization.setAngle(90);
     elevatorRoot.append(elevator.visualization);
 
     coralElbow.visualization.setLength(.2);
+    coralElbow.visualizationAngleOffset = () -> -90;
     elevator.visualization.append(coralElbow.visualization);
 
     coralWrist.visualization.setLength(.2);
     coralElbow.visualization.append(coralWrist.visualization);
     algaeArm.visualization.setLength(.1);
+
+    MechanismRoot2d algaeRoot = sideView.getRoot("Algae Root", 0.8, 0);
     algaeRoot.append(algaeArm.visualization);
 
     SmartDashboard.putData("Side View", sideView);
