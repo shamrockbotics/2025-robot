@@ -47,8 +47,6 @@ public class RobotContainer {
   private final Vision vision;
   private final Mechanism coralElbow;
   private final Mechanism coralWrist;
-  private final Mechanism algaeArm;
-  private final Roller algaeIntake;
   private final Mechanism elevator;
   private final Roller coralIntake;
   private final CoralCommands coralCommands;
@@ -83,8 +81,6 @@ public class RobotContainer {
         coralWrist = new Mechanism(new CoralWristConfig());
         elevator = new Mechanism(new ElevatorConfig());
         coralIntake = new Roller(new CoralIntakeConfig());
-        algaeArm = new Mechanism(new AlgaeArmConfig());
-        algaeIntake = new Roller(new AlgaeIntakeConfig());
         break;
 
       case SIM:
@@ -107,8 +103,6 @@ public class RobotContainer {
         coralWrist = new Mechanism(new CoralWristConfig(false));
         elevator = new Mechanism(new ElevatorConfig(false));
         coralIntake = new Roller(new CoralIntakeConfig(false));
-        algaeArm = new Mechanism(new AlgaeArmConfig(false));
-        algaeIntake = new Roller(new AlgaeIntakeConfig(false));
         break;
 
       default:
@@ -125,8 +119,6 @@ public class RobotContainer {
         coralWrist = new Mechanism(new MechanismConfig() {});
         elevator = new Mechanism(new MechanismConfig() {});
         coralIntake = new Roller(new RollerConfig() {});
-        algaeArm = new Mechanism(new MechanismConfig() {});
-        algaeIntake = new Roller(new RollerConfig() {});
         break;
     }
 
@@ -209,12 +201,6 @@ public class RobotContainer {
     operatorController.back().whileTrue(elevator.runPercentCommand(manualRight));
     operatorController.rightBumper().whileTrue(coralElbow.runPercentCommand(manualRight));
     operatorController.leftBumper().whileTrue(coralWrist.runPercentCommand(manualLeft));
-
-    // algae subsystem control
-    controller.rightBumper().whileTrue(algaeArm.runPercentCommand(() -> 0.2));
-    controller.leftBumper().whileTrue(algaeArm.runPercentCommand(() -> -0.2));
-    controller.rightTrigger().whileTrue(algaeIntake.intakeCommand());
-    controller.leftTrigger().whileTrue(algaeIntake.releaseCommand());
   }
 
   private void configureVisualization() {
@@ -230,10 +216,6 @@ public class RobotContainer {
 
     coralWrist.visualization.setLength(.2);
     coralElbow.visualization.append(coralWrist.visualization);
-    algaeArm.visualization.setLength(.1);
-
-    MechanismRoot2d algaeRoot = sideView.getRoot("Algae Root", 0.8, 0);
-    algaeRoot.append(algaeArm.visualization);
 
     SmartDashboard.putData("Side View", sideView);
   }
