@@ -138,7 +138,21 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     autoChooser.addOption(
-        "Leave Start", DriveCommands.joystickDrive(drive, () -> 0.2, () -> 0, () -> 0));
+        "Leave Start",
+        DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0).withTimeout(4.0));
+    autoChooser.addOption(
+        "L4 Timed Auto",
+        Commands.sequence(
+            DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0).withTimeout(6.0),
+            new L4(elevator, coralElbow, coralWrist).withTimeout(2.0),
+            new Extake(coralIntake).withTimeout(2.0)));
+    autoChooser.addOption(
+        "L1 Timed Auto",
+        Commands.sequence(
+            DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0).withTimeout(8.0),
+            new IntakePosition(elevator, coralElbow, coralWrist).withTimeout(2.0),
+            new Extake(coralIntake).withTimeout(2.0)));
+
     // Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
@@ -155,8 +169,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    UsbCamera climberCamera = CameraServer.startAutomaticCapture(0);
-    UsbCamera coralCamera = CameraServer.startAutomaticCapture(1);
+    UsbCamera coralCamera = CameraServer.startAutomaticCapture(0);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -247,7 +260,7 @@ public class RobotContainer {
                 () -> {
                   elevator.runToHeight(0);
                   coralElbow.runToAngle(0);
-                  coralWrist.runToAngle(-0.6);
+                  coralWrist.runToAngle(-0.2);
                 },
                 elevator,
                 coralElbow,
@@ -290,6 +303,7 @@ public class RobotContainer {
                   coralIntake.run(-0.3);
                 },
                 coralIntake));
+
     controller
         .rightBumper()
         .whileTrue(
@@ -308,6 +322,14 @@ public class RobotContainer {
                 },
                 algaeArm));
     controller
+        .a()
+        .whileTrue(
+            Commands.run(
+                () -> {
+                  algaeArm.runToAngle(0.2);
+                },
+                algaeArm));
+    controller
         .leftTrigger()
         .whileTrue(
             Commands.run(
@@ -320,7 +342,7 @@ public class RobotContainer {
         .whileTrue(
             Commands.run(
                 () -> {
-                  algaeIntake.run(.3);
+                  algaeIntake.run(.8);
                 },
                 algaeIntake));
   }
