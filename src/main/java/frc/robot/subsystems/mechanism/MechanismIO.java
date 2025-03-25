@@ -1,5 +1,6 @@
 package frc.robot.subsystems.mechanism;
 
+import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface MechanismIO {
@@ -22,4 +23,7 @@ public interface MechanismIO {
 
   /** Run open loop at the specified output in the range [-1, 1]. */
   public default void setOutput(double output) {}
+
+  /** Run open loop at the specified voltage. */
+  public default void setVoltage(Voltage voltage) {}
 }

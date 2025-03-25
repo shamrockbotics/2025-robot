@@ -48,11 +48,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.commands.DriveCommands;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class Drive extends SubsystemBase {
   static final Lock odometryLock = new ReentrantLock();
@@ -362,5 +364,20 @@ public class Drive extends SubsystemBase {
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
     return maxSpeedMetersPerSec / driveBaseRadius;
+  }
+
+  public void addSysIdCommands(LoggedDashboardChooser<Command> chooser) {
+    chooser.addOption(
+        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(this));
+    chooser.addOption(
+        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(this));
+    chooser.addOption(
+        "Drive SysId (Quasistatic Forward)", sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    chooser.addOption(
+        "Drive SysId (Quasistatic Reverse)", sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    chooser.addOption(
+        "Drive SysId (Dynamic Forward)", sysIdDynamic(SysIdRoutine.Direction.kForward));
+    chooser.addOption(
+        "Drive SysId (Dynamic Reverse)", sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 }

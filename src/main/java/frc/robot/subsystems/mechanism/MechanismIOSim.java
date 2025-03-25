@@ -1,9 +1,12 @@
 package frc.robot.subsystems.mechanism;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
@@ -87,5 +90,11 @@ public class MechanismIOSim implements MechanismIO {
   public void setOutput(double output) {
     closedLoop = false;
     appliedVolts = output * maxVoltage;
+  }
+
+  @Override
+  public void setVoltage(Voltage voltage) {
+    closedLoop = false;
+    appliedVolts = voltage.in(Volts);
   }
 }

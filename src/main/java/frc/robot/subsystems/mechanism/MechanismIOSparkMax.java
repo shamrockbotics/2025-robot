@@ -1,5 +1,6 @@
 package frc.robot.subsystems.mechanism;
 
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.util.SparkUtil.*;
 
 import com.revrobotics.AbsoluteEncoder;
@@ -14,6 +15,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.units.measure.Voltage;
 import java.util.function.DoubleSupplier;
 
 public class MechanismIOSparkMax implements MechanismIO {
@@ -29,7 +31,8 @@ public class MechanismIOSparkMax implements MechanismIO {
   // Connection debouncers
   private final Debouncer connectedDebounce = new Debouncer(0.5);
 
-  double maxVoltage = 12.0;
+  // Private variables
+  private double maxVoltage = 12.0;
 
   /* Mechanism with a zero offset indicates absolute encoder */
   public MechanismIOSparkMax(
@@ -41,8 +44,8 @@ public class MechanismIOSparkMax implements MechanismIO {
       double encoderVelocityFactor,
       int currentLimit,
       double voltageLimit,
-      double positionKp,
-      double positionKd) {
+      double kP,
+      double kD) {
     maxVoltage = voltageLimit;
     spark = new SparkMax(id, MotorType.kBrushless);
     absoluteEncoder = spark.getAbsoluteEncoder();
@@ -68,7 +71,7 @@ public class MechanismIOSparkMax implements MechanismIO {
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
         .positionWrappingEnabled(true)
         .positionWrappingInputRange(-Math.PI, Math.PI)
-        .pidf(positionKp, 0.0, positionKd, 0.0);
+        .pidf(kP, 0.0, kD, 0.0);
     sparkConfig
         .signals
         .absoluteEncoderPositionAlwaysOn(true)
@@ -95,8 +98,8 @@ public class MechanismIOSparkMax implements MechanismIO {
       double encoderVelocityFactor,
       int currentLimit,
       double voltageLimit,
-      double positionKp,
-      double positionKd) {
+      double kP,
+      double kD) {
     maxVoltage = voltageLimit;
     spark = new SparkMax(id, MotorType.kBrushless);
     absoluteEncoder = null;
@@ -120,7 +123,7 @@ public class MechanismIOSparkMax implements MechanismIO {
     sparkConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
-        .pidf(positionKp, 0.0, positionKd, 0.0);
+        .pidf(kP, 0.0, kD, 0.0);
     sparkConfig
         .signals
         .externalOrAltEncoderPositionAlwaysOn(true)
@@ -138,6 +141,7 @@ public class MechanismIOSparkMax implements MechanismIO {
                 sparkConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
   }
 
+  // Add a follower to the existing IO
   public MechanismIOSparkMax addFollower(int id, boolean inverted) {
     SparkMax followerSpark = new SparkMax(id, MotorType.kBrushless);
     SparkMaxConfig followerSparkConfig = new SparkMaxConfig();
@@ -183,5 +187,10 @@ public class MechanismIOSparkMax implements MechanismIO {
   @Override
   public void setOutput(double value) {
     spark.setVoltage(value * maxVoltage);
+  }
+
+  @Override
+  public void setVoltage(Voltage voltage) {
+    spark.setVoltage(voltage.in(Volts));
   }
 }

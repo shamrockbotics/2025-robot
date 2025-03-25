@@ -9,13 +9,16 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class Mechanism extends SubsystemBase {
   private final MechanismIO io;
   private final MechanismIOInputsAutoLogged inputs = new MechanismIOInputsAutoLogged();
   private final MotionType motionType;
+  private final SysIdRoutine sysId;
 
   private final double minPosition;
   private final double maxPosition;
@@ -41,6 +44,15 @@ public class Mechanism extends SubsystemBase {
     setName(config.name);
     io = config.io;
     motionType = config.motionType;
+
+    sysId =
+        new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                null,
+                null,
+                (state) -> Logger.recordOutput(getName() + "/SysIdState", state.toString())),
+            new SysIdRoutine.Mechanism(io::setVoltage, null, this));
 
     minPosition = config.minPosition;
     maxPosition = config.maxPosition;
@@ -150,5 +162,26 @@ public class Mechanism extends SubsystemBase {
   public Command runPercentCommand(DoubleSupplier valueSupplier) {
     double value = valueSupplier.getAsDouble();
     return run(() -> run(value)).withName("Run Percent " + value);
+  }
+
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return sysId.quasistatic(direction);
+  }
+
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return sysId.dynamic(direction);
+  }
+
+  public void addSysIdCommands(LoggedDashboardChooser<Command> chooser) {
+    chooser.addOption(
+        getName() + " SysId (Quasistatic Forward)",
+        sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    chooser.addOption(
+        getName() + " SysId (Quasistatic Reverse)",
+        sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    chooser.addOption(
+        getName() + " SysId (Dynamic Forward)", sysIdDynamic(SysIdRoutine.Direction.kForward));
+    chooser.addOption(
+        getName() + " SysId (Dynamic Reverse)", sysIdDynamic(SysIdRoutine.Direction.kReverse));
   }
 }
