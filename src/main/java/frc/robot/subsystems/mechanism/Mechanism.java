@@ -1,6 +1,7 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.mechanism;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -14,10 +15,12 @@ import org.littletonrobotics.junction.Logger;
 public class Mechanism extends SubsystemBase {
   private final MechanismIO io;
   private final MechanismIOInputsAutoLogged inputs = new MechanismIOInputsAutoLogged();
+  private final MotionType motionType;
 
   private final double minPosition;
   private final double maxPosition;
   private final double allowedError;
+
   private final Alert disconnectedAlert;
 
   private boolean holding = false;
@@ -25,10 +28,19 @@ public class Mechanism extends SubsystemBase {
   private double lastRunPosition = 0.0;
 
   public MechanismLigament2d visualization;
+  public DoubleSupplier visualizationAngleOffset = () -> 0.0;
+  public DoubleSupplier visualizationLengthOffset = () -> 0.0;
+  public boolean visualizationReversed = false;
+
+  public static enum MotionType {
+    LINEAR,
+    ANGULAR
+  }
 
   public Mechanism(MechanismConfig config) {
     setName(config.name);
     io = config.io;
+    motionType = config.motionType;
 
     minPosition = config.minPosition;
     maxPosition = config.maxPosition;
@@ -62,7 +74,16 @@ public class Mechanism extends SubsystemBase {
     disconnectedAlert.set(!inputs.connected);
   }
 
-  protected void updateVisualization() {}
+  private void updateVisualization() {
+    if (motionType == MotionType.ANGULAR) {
+      double visualizationAngle =
+          Units.radiansToDegrees(getPosition()) + visualizationAngleOffset.getAsDouble();
+      if (visualizationReversed) visualizationAngle = 180 - visualizationAngle;
+      visualization.setAngle(visualizationAngle);
+    } else {
+      visualization.setLength(getPosition() + visualizationLengthOffset.getAsDouble());
+    }
+  }
 
   /**
    * Runs the mechanism to the desired position.

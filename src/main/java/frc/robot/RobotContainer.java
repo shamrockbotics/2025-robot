@@ -20,7 +20,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,10 +27,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
-import frc.robot.subsystems.MechanismConfig;
-import frc.robot.subsystems.arm.*;
+import frc.robot.subsystems.*;
 import frc.robot.subsystems.drive.*;
-import frc.robot.subsystems.elevator.*;
+import frc.robot.subsystems.mechanism.*;
 import frc.robot.subsystems.roller.*;
 import frc.robot.subsystems.vision.*;
 import java.util.function.DoubleSupplier;
@@ -47,11 +45,11 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-  private final Arm coralElbow;
-  private final Arm coralWrist;
-  private final Arm algaeArm;
+  private final Mechanism coralElbow;
+  private final Mechanism coralWrist;
+  private final Mechanism algaeArm;
   private final Roller algaeIntake;
-  private final Elevator elevator;
+  private final Mechanism elevator;
   private final Roller coralIntake;
   private final CoralCommands coralCommands;
 
@@ -78,13 +76,13 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                // new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                new VisionIOPhotonVision(camera1Name, robotToCamera1),
                 new VisionIOPhotonVision(camera2Name, robotToCamera2));
-        coralElbow = new Arm(new CoralElbowConfig());
-        coralWrist = new Arm(new CoralWristConfig());
-        elevator = new Elevator(new ElevatorConfig());
+        coralElbow = new Mechanism(new CoralElbowConfig());
+        coralWrist = new Mechanism(new CoralWristConfig());
+        elevator = new Mechanism(new ElevatorConfig());
         coralIntake = new Roller(new CoralIntakeConfig());
-        algaeArm = new Arm(new AlgaeArmConfig());
+        algaeArm = new Mechanism(new AlgaeArmConfig());
         algaeIntake = new Roller(new AlgaeIntakeConfig());
         break;
 
@@ -104,11 +102,11 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose),
                 new VisionIOPhotonVisionSim(camera2Name, robotToCamera2, drive::getPose));
 
-        coralElbow = new Arm(new CoralElbowConfig(false));
-        coralWrist = new Arm(new CoralWristConfig(false));
-        elevator = new Elevator(new ElevatorConfig(false));
+        coralElbow = new Mechanism(new CoralElbowConfig(false));
+        coralWrist = new Mechanism(new CoralWristConfig(false));
+        elevator = new Mechanism(new ElevatorConfig(false));
         coralIntake = new Roller(new CoralIntakeConfig(false));
-        algaeArm = new Arm(new AlgaeArmConfig(false));
+        algaeArm = new Mechanism(new AlgaeArmConfig(false));
         algaeIntake = new Roller(new AlgaeIntakeConfig(false));
         break;
 
@@ -122,11 +120,11 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        coralElbow = new Arm(new MechanismConfig() {});
-        coralWrist = new Arm(new MechanismConfig() {});
-        elevator = new Elevator(new MechanismConfig() {});
+        coralElbow = new Mechanism(new MechanismConfig() {});
+        coralWrist = new Mechanism(new MechanismConfig() {});
+        elevator = new Mechanism(new MechanismConfig() {});
         coralIntake = new Roller(new RollerConfig() {});
-        algaeArm = new Arm(new MechanismConfig() {});
+        algaeArm = new Mechanism(new MechanismConfig() {});
         algaeIntake = new Roller(new RollerConfig() {});
         break;
     }
@@ -147,7 +145,8 @@ public class RobotContainer {
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     autoChooser.addOption(
-        "Leave Start", DriveCommands.joystickDrive(drive, () -> 0.2, () -> 0, () -> 0));
+        "Leave Start",
+        DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0).withTimeout(2));
 
     // Set up SysId routines
     autoChooser.addOption(
@@ -165,8 +164,7 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-    CameraServer.startAutomaticCapture("Front Driver Camera", 0);
-    CameraServer.startAutomaticCapture("Coral Camera", 1);
+    CameraServer.startAutomaticCapture("Coral Camera", 0);
 
     // Configure the button bindings
     configureButtonBindings();

@@ -2,17 +2,17 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.mechanism.Mechanism;
 import frc.robot.subsystems.roller.Roller;
 
 public class CoralCommands {
-  private Elevator elevator;
-  private Arm coralElbow;
-  private Arm coralWrist;
+  private Mechanism elevator;
+  private Mechanism coralElbow;
+  private Mechanism coralWrist;
   private Roller coralIntake;
 
-  public CoralCommands(Elevator elevator, Arm coralElbow, Arm coralWrist, Roller coralIntake) {
+  public CoralCommands(
+      Mechanism elevator, Mechanism coralElbow, Mechanism coralWrist, Roller coralIntake) {
     this.elevator = elevator;
     this.coralElbow = coralElbow;
     this.coralWrist = coralWrist;

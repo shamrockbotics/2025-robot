@@ -1,0 +1,187 @@
+package frc.robot.subsystems.mechanism;
+
+import static frc.robot.util.SparkUtil.*;
+
+import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.filter.Debouncer;
+import java.util.function.DoubleSupplier;
+
+public class MechanismIOSparkMax implements MechanismIO {
+  // Hardware objects
+  private final SparkMax spark;
+  private final AbsoluteEncoder absoluteEncoder;
+  private final RelativeEncoder relativeEncoder;
+
+  // Closed loop controllers
+  private final SparkClosedLoopController controller;
+  private double setpoint = 0.0;
+
+  // Connection debouncers
+  private final Debouncer connectedDebounce = new Debouncer(0.5);
+
+  double maxVoltage = 12.0;
+
+  /* Mechanism with a zero offset indicates absolute encoder */
+  public MechanismIOSparkMax(
+      int id,
+      double zeroOffset,
+      boolean motorInverted,
+      boolean encoderInverted,
+      double encoderPositionFactor,
+      double encoderVelocityFactor,
+      int currentLimit,
+      double voltageLimit,
+      double positionKp,
+      double positionKd) {
+    maxVoltage = voltageLimit;
+    spark = new SparkMax(id, MotorType.kBrushless);
+    absoluteEncoder = spark.getAbsoluteEncoder();
+    relativeEncoder = null;
+    controller = spark.getClosedLoopController();
+
+    SparkMaxConfig sparkConfig = new SparkMaxConfig();
+    sparkConfig
+        .inverted(motorInverted)
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(currentLimit)
+        .voltageCompensation(maxVoltage);
+    sparkConfig
+        .absoluteEncoder
+        .inverted(encoderInverted)
+        .positionConversionFactor(encoderPositionFactor)
+        .velocityConversionFactor(encoderVelocityFactor)
+        .averageDepth(2)
+        .zeroCentered(true)
+        .zeroOffset(zeroOffset);
+    sparkConfig
+        .closedLoop
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+        .positionWrappingEnabled(true)
+        .positionWrappingInputRange(-Math.PI, Math.PI)
+        .pidf(positionKp, 0.0, positionKd, 0.0);
+    sparkConfig
+        .signals
+        .absoluteEncoderPositionAlwaysOn(true)
+        .absoluteEncoderPositionPeriodMs(20)
+        .absoluteEncoderVelocityAlwaysOn(true)
+        .absoluteEncoderVelocityPeriodMs(20)
+        .appliedOutputPeriodMs(20)
+        .busVoltagePeriodMs(20)
+        .outputCurrentPeriodMs(20);
+    tryUntilOk(
+        spark,
+        5,
+        () ->
+            spark.configure(
+                sparkConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+  }
+
+  /* Mechanism with no zero offset indicates relative encoder */
+  public MechanismIOSparkMax(
+      int id,
+      boolean motorInverted,
+      boolean encoderInverted,
+      double encoderPositionFactor,
+      double encoderVelocityFactor,
+      int currentLimit,
+      double voltageLimit,
+      double positionKp,
+      double positionKd) {
+    maxVoltage = voltageLimit;
+    spark = new SparkMax(id, MotorType.kBrushless);
+    absoluteEncoder = null;
+    relativeEncoder = spark.getAlternateEncoder();
+    controller = spark.getClosedLoopController();
+
+    SparkMaxConfig sparkConfig = new SparkMaxConfig();
+    sparkConfig
+        .inverted(motorInverted)
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(currentLimit)
+        .voltageCompensation(maxVoltage);
+    sparkConfig
+        .alternateEncoder
+        .inverted(encoderInverted)
+        .positionConversionFactor(encoderPositionFactor)
+        .velocityConversionFactor(encoderVelocityFactor)
+        .averageDepth(2)
+        .countsPerRevolution(8192)
+        .setSparkMaxDataPortConfig();
+    sparkConfig
+        .closedLoop
+        .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
+        .pidf(positionKp, 0.0, positionKd, 0.0);
+    sparkConfig
+        .signals
+        .externalOrAltEncoderPositionAlwaysOn(true)
+        .externalOrAltEncoderPosition(20)
+        .externalOrAltEncoderVelocityAlwaysOn(true)
+        .externalOrAltEncoderVelocity(20)
+        .appliedOutputPeriodMs(20)
+        .busVoltagePeriodMs(20)
+        .outputCurrentPeriodMs(20);
+    tryUntilOk(
+        spark,
+        5,
+        () ->
+            spark.configure(
+                sparkConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters));
+  }
+
+  public MechanismIOSparkMax addFollower(int id, boolean inverted) {
+    SparkMax followerSpark = new SparkMax(id, MotorType.kBrushless);
+    SparkMaxConfig followerSparkConfig = new SparkMaxConfig();
+    followerSparkConfig.idleMode(IdleMode.kBrake).follow(spark, inverted);
+    tryUntilOk(
+        followerSpark,
+        5,
+        () ->
+            followerSpark.configure(
+                followerSparkConfig,
+                ResetMode.kResetSafeParameters,
+                PersistMode.kPersistParameters));
+    return this;
+  }
+
+  @Override
+  public void updateInputs(MechanismIOInputs inputs) {
+    // Update inputs
+    sparkStickyFault = false;
+    if (absoluteEncoder != null) {
+      ifOk(spark, absoluteEncoder::getPosition, (value) -> inputs.currentPosition = value);
+      ifOk(spark, absoluteEncoder::getVelocity, (value) -> inputs.velocity = value);
+    } else if (relativeEncoder != null) {
+      if (relativeEncoder.getPosition() < 0.0) relativeEncoder.setPosition(0.0);
+      ifOk(spark, relativeEncoder::getPosition, (value) -> inputs.currentPosition = value);
+      ifOk(spark, relativeEncoder::getVelocity, (value) -> inputs.velocity = value);
+    }
+    ifOk(
+        spark,
+        new DoubleSupplier[] {spark::getAppliedOutput, spark::getBusVoltage},
+        (values) -> inputs.appliedVolts = values[0] * values[1]);
+    ifOk(spark, spark::getOutputCurrent, (value) -> inputs.currentAmps = value);
+    inputs.targetPosition = setpoint;
+    inputs.connected = connectedDebounce.calculate(!sparkStickyFault);
+  }
+
+  @Override
+  public void setPosition(double position) {
+    setpoint = position;
+    controller.setReference(setpoint, ControlType.kPosition);
+  }
+
+  @Override
+  public void setOutput(double value) {
+    spark.setVoltage(value * maxVoltage);
+  }
+}
