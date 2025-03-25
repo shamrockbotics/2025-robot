@@ -66,26 +66,18 @@ public class MechanismIOSparkMax implements MechanismIO {
     sparkConfig
         .absoluteEncoder
         .inverted(encoderInverted)
+        .zeroCentered(true)
+        .zeroOffset(zeroOffset / encoderPositionFactor)
         .positionConversionFactor(encoderPositionFactor)
         .velocityConversionFactor(encoderVelocityFactor)
-        .averageDepth(2)
-        .zeroCentered(true)
-        .zeroOffset(zeroOffset);
+        .averageDepth(2);
     sparkConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
         .positionWrappingEnabled(true)
         .positionWrappingInputRange(-Math.PI, Math.PI)
         .pidf(kP, 0.0, kD, 0.0);
-    sparkConfig
-        .signals
-        .absoluteEncoderPositionAlwaysOn(true)
-        .absoluteEncoderPositionPeriodMs(20)
-        .absoluteEncoderVelocityAlwaysOn(true)
-        .absoluteEncoderVelocityPeriodMs(20)
-        .appliedOutputPeriodMs(20)
-        .busVoltagePeriodMs(20)
-        .outputCurrentPeriodMs(20);
+    sparkConfig.signals.appliedOutputPeriodMs(20).busVoltagePeriodMs(20).outputCurrentPeriodMs(20);
     tryUntilOk(
         spark,
         5,
