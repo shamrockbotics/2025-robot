@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 public class VisionConstants {
   // AprilTag layout
   public static AprilTagFieldLayout aprilTagLayout =
-  AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
   // Camera names, must match names configured on coprocessor
   public static String camera0Name = "back_camera";
@@ -83,7 +83,7 @@ public class VisionConstants {
 
       System.out.println("Path: " + jsonFilePath);
 
-      //aprilTagLayout = new AprilTagFieldLayout(jsonFilePath);
+      // aprilTagLayout = new AprilTagFieldLayout(jsonFilePath);
 
       System.out.println("AprilTag layout loaded successfully.");
     } catch (Exception e) {

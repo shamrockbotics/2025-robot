@@ -18,23 +18,22 @@ import static frc.robot.subsystems.vision.VisionConstants.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
-import frc.robot.subsystems.arm.*;
+import frc.robot.subsystems.*;
 import frc.robot.subsystems.drive.*;
-import frc.robot.subsystems.elevator.*;
+import frc.robot.subsystems.mechanism.*;
 import frc.robot.subsystems.roller.*;
 import frc.robot.subsystems.vision.*;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -46,12 +45,11 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Vision vision;
-  private final Arm coralElbow;
-  private final Arm coralWrist;
-  private final Arm algaeArm;
-  private final Roller algaeIntake;
-  private final Elevator elevator;
+  private final Mechanism coralElbow;
+  private final Mechanism coralWrist;
+  private final Mechanism elevator;
   private final Roller coralIntake;
+  private final CoralCommands coralCommands;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -59,6 +57,7 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+  private final LoggedNetworkBoolean fieldOriented;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -76,17 +75,12 @@ public class RobotContainer {
             new Vision(
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVision(camera0Name, robotToCamera0),
-                // new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                new VisionIOPhotonVision(camera1Name, robotToCamera1),
                 new VisionIOPhotonVision(camera2Name, robotToCamera2));
-        coralElbow = new Arm(new CoralElbowConfig());
-        coralWrist = new Arm(new CoralWristConfig());
-        elevator = new Elevator(new ElevatorSpecificConfig());
+        coralElbow = new Mechanism(new CoralElbowConfig());
+        coralWrist = new Mechanism(new CoralWristConfig());
+        elevator = new Mechanism(new ElevatorConfig());
         coralIntake = new Roller(new CoralIntakeConfig());
-        algaeArm = new Arm(new AlgaeArmConfig());
-        algaeIntake = new Roller(new AlgaeIntakeConfig());
-        NamedCommands.registerCommand(
-            "L4",
-            Commands.sequence(new L4(elevator, coralElbow, coralWrist), new Extake(coralIntake)));
         break;
 
       case SIM:
@@ -105,12 +99,10 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose),
                 new VisionIOPhotonVisionSim(camera2Name, robotToCamera2, drive::getPose));
 
-        coralElbow = new Arm(new CoralElbowConfig(false));
-        coralWrist = new Arm(new CoralWristConfig(false));
-        elevator = new Elevator(new ElevatorSpecificConfig(false));
+        coralElbow = new Mechanism(new CoralElbowConfig(false));
+        coralWrist = new Mechanism(new CoralWristConfig(false));
+        elevator = new Mechanism(new ElevatorConfig(false));
         coralIntake = new Roller(new CoralIntakeConfig(false));
-        algaeArm = new Arm(new AlgaeArmConfig(false));
-        algaeIntake = new Roller(new AlgaeIntakeConfig(false));
         break;
 
       default:
@@ -123,16 +115,25 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
-        coralElbow = new Arm(new ArmConfig() {});
-        coralWrist = new Arm(new ArmConfig() {});
-        elevator = new Elevator(new ElevatorConfig() {});
-        coralIntake = new Roller(new CoralIntakeConfig() {});
-        algaeArm = new Arm(new AlgaeArmConfig() {});
-        algaeIntake = new Roller(new AlgaeIntakeConfig() {});
+        coralElbow = new Mechanism(new MechanismConfig() {});
+        coralWrist = new Mechanism(new MechanismConfig() {});
+        elevator = new Mechanism(new MechanismConfig() {});
+        coralIntake = new Roller(new RollerConfig() {});
         break;
     }
+    coralWrist.setPositionOffset(() -> coralElbow.getPosition());
 
-    SmartDashboard.setDefaultBoolean("Field Oriented", false);
+    coralCommands = new CoralCommands(elevator, coralElbow, coralWrist, coralIntake);
+
+    NamedCommands.registerCommand("L1", coralCommands.l1());
+    NamedCommands.registerCommand("L2", coralCommands.l2());
+    NamedCommands.registerCommand("L3", coralCommands.l3());
+    NamedCommands.registerCommand("L4", coralCommands.l4());
+    NamedCommands.registerCommand("Coral Station", coralCommands.coralStation());
+    NamedCommands.registerCommand("Intake", coralCommands.intake());
+    NamedCommands.registerCommand("Release", coralCommands.release());
+
+    fieldOriented = new LoggedNetworkBoolean("/SmartDashboard/Field Oriented", false);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -144,32 +145,22 @@ public class RobotContainer {
         "L4 Timed Auto",
         Commands.sequence(
             DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0).withTimeout(6.0),
-            new L4(elevator, coralElbow, coralWrist).withTimeout(2.0),
-            new Extake(coralIntake).withTimeout(2.0)));
+            coralCommands.l4().withTimeout(2.0),
+            coralCommands.release().withTimeout(2.0)));
     autoChooser.addOption(
         "L1 Timed Auto",
         Commands.sequence(
             DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0).withTimeout(8.0),
-            new IntakePosition(elevator, coralElbow, coralWrist).withTimeout(2.0),
-            new Extake(coralIntake).withTimeout(2.0)));
+            coralCommands.coralStation().withTimeout(2.0),
+            coralCommands.release().withTimeout(2.0)));
 
     // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // drive.addSysIdCommands(autoChooser);
+    // coralElbow.addSysIdCommands(autoChooser);
+    // coralWrist.addSysIdCommands(autoChooser);
+    // elevator.addSysIdCommands(autoChooser);
 
-    UsbCamera coralCamera = CameraServer.startAutomaticCapture(0);
+    CameraServer.startAutomaticCapture("Coral Camera", 0);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -192,7 +183,7 @@ public class RobotContainer {
             () -> -controller.getLeftY() * heightLimitMultiplier(),
             () -> -controller.getLeftX() * heightLimitMultiplier(),
             () -> -controller.getRightX() * heightLimitMultiplier(),
-            SmartDashboard.getBoolean("Field Oriented", false)));
+            fieldOriented.get()));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -208,160 +199,36 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
 
-    // Default arm command, hold in position
-    coralElbow.setDefaultCommand(
-        Commands.run(
-            () -> {
-              coralElbow.hold();
-            },
-            coralElbow));
-    coralWrist.setDefaultCommand(
-        Commands.run(
-            () -> {
-              coralWrist.hold();
-            },
-            coralWrist));
-    elevator.setDefaultCommand(
-        Commands.run(
-            () -> {
-              elevator.hold();
-            },
-            elevator));
-    algaeArm.setDefaultCommand(
-        Commands.run(
-            () -> {
-              algaeArm.hold();
-            },
-            algaeArm));
-    coralIntake.setDefaultCommand(
-        Commands.run(
-            () -> {
-              coralIntake.stop();
-            },
-            coralIntake));
-    algaeIntake.setDefaultCommand(
-        Commands.run(
-            () -> {
-              algaeIntake.stop();
-            },
-            algaeIntake));
+    // coral subsystem control
+    operatorController.a().whileTrue(coralCommands.coralStation());
+    operatorController.b().whileTrue(coralCommands.l2());
+    operatorController.x().whileTrue(coralCommands.l3());
+    operatorController.y().whileTrue(coralCommands.l4());
+    operatorController.start().onTrue(coralCommands.stow());
+    operatorController.rightTrigger().whileTrue(coralCommands.intake());
+    operatorController.leftTrigger().whileTrue(coralCommands.release());
 
-    // loading station (human player station)
-    operatorController.a().whileTrue(new IntakePosition(elevator, coralElbow, coralWrist));
-    operatorController.b().whileTrue(new L2(elevator, coralElbow, coralWrist));
-    operatorController.x().whileTrue(new L3(elevator, coralElbow, coralWrist));
-    operatorController.y().whileTrue(new L4(elevator, coralElbow, coralWrist));
-
-    // stow position
-    operatorController
-        .start()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  elevator.runToHeight(0);
-                  coralElbow.runToAngle(0);
-                  coralWrist.runToAngle(-0.2);
-                },
-                elevator,
-                coralElbow,
-                coralWrist));
-
-    // coral elbow manual control
-    operatorController
-        .rightBumper()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  coralElbow.run(-operatorController.getRightY() * 0.5);
-                },
-                coralElbow));
-
-    // coral wrist manual control
-    operatorController
-        .leftBumper()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  coralWrist.run(-operatorController.getLeftY() * 0.5);
-                },
-                coralWrist));
-
-    // Coral intake control
-    operatorController
-        .rightTrigger()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  coralIntake.run(0.3);
-                },
-                coralIntake));
-    operatorController
-        .leftTrigger()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  coralIntake.run(-0.3);
-                },
-                coralIntake));
-
-    controller
-        .rightBumper()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  algaeArm.run(.2);
-                },
-                algaeArm));
-
-    controller
-        .leftBumper()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  algaeArm.run(-.2);
-                },
-                algaeArm));
-    controller
-        .a()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  algaeArm.runToAngle(0.2);
-                },
-                algaeArm));
-    controller
-        .leftTrigger()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  algaeIntake.run(-.3);
-                },
-                algaeIntake));
-    controller
-        .rightTrigger()
-        .whileTrue(
-            Commands.run(
-                () -> {
-                  algaeIntake.run(.8);
-                },
-                algaeIntake));
+    // coral subsystem manual control
+    DoubleSupplier manualLeft = () -> -operatorController.getLeftY() * 0.5;
+    DoubleSupplier manualRight = () -> -operatorController.getRightY() * 0.5;
+    operatorController.back().whileTrue(elevator.runPercentCommand(manualRight));
+    operatorController.rightBumper().whileTrue(coralElbow.runPercentCommand(manualRight));
+    operatorController.leftBumper().whileTrue(coralWrist.runPercentCommand(manualLeft));
   }
 
   private void configureVisualization() {
     Mechanism2d sideView = new Mechanism2d(2, 2);
 
     MechanismRoot2d elevatorRoot = sideView.getRoot("Elevator Root", 1.2, 0);
-    MechanismRoot2d algaeRoot = sideView.getRoot("Algae Root", 1.5, 0);
     elevator.visualization.setAngle(90);
     elevatorRoot.append(elevator.visualization);
 
     coralElbow.visualization.setLength(.2);
+    coralElbow.visualizationAngleOffset = () -> -90;
     elevator.visualization.append(coralElbow.visualization);
 
     coralWrist.visualization.setLength(.2);
     coralElbow.visualization.append(coralWrist.visualization);
-    algaeArm.visualization.setLength(.1);
-    algaeRoot.append(algaeArm.visualization);
 
     SmartDashboard.putData("Side View", sideView);
   }
@@ -376,6 +243,6 @@ public class RobotContainer {
   }
 
   private double heightLimitMultiplier() {
-    return 1.0 - (elevator.getHeightPercent() * 0.5);
+    return 1.0 - (elevator.getPositionPercent() * 0.5);
   }
 }
