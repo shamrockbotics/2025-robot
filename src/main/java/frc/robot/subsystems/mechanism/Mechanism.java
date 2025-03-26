@@ -164,8 +164,7 @@ public class Mechanism extends SubsystemBase {
   }
 
   public Command runPercentCommand(DoubleSupplier valueSupplier) {
-    double value = valueSupplier.getAsDouble();
-    return run(() -> run(value)).withName("Run Percent " + value);
+    return run(() -> run(valueSupplier.getAsDouble())).withName("Run Percent");
   }
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
