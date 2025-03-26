@@ -121,6 +121,7 @@ public class RobotContainer {
         coralIntake = new Roller(new RollerConfig() {});
         break;
     }
+    coralWrist.setPositionOffset(() -> coralElbow.getPosition());
 
     coralCommands = new CoralCommands(elevator, coralElbow, coralWrist, coralIntake);
 

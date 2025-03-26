@@ -26,8 +26,8 @@ public class CoralCommands {
   public Command stow() {
     return Commands.parallel(
             elevator.runToPositionCommand(0),
-            coralElbow.runToPositionCommand(0 + Math.PI / 2),
-            coralWrist.runToPositionCommand(-0.6))
+            coralElbow.runToPositionCommand(Math.PI / 2),
+            coralWrist.runToPositionCommand(0))
         .until(() -> onTarget())
         .withName("Stow");
   }

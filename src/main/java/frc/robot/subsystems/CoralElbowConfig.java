@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.mechanism.*;
 
@@ -12,21 +13,13 @@ public class CoralElbowConfig extends MechanismConfig {
     name = "Coral Elbow";
     motionType = Mechanism.MotionType.ANGULAR;
     minPosition = -2.4 + Math.PI / 2;
-    maxPosition = 0.05 + Math.PI / 2;
+    maxPosition = 0.2 + Math.PI / 2;
     allowedError = Units.degreesToRadians(2);
     if (real) {
       io =
           new MechanismIOSparkMax(
-              13,
-              3.05 - Math.PI / 2,
-              false,
-              true,
-              2 * Math.PI,
-              2 * Math.PI / 60,
-              40,
-              6.0,
-              2.0,
-              0.0);
+                  13, 1.63, false, true, 2 * Math.PI, 2 * Math.PI / 60, 40, 6.0, 1.7, 5.0)
+              .addFeedforward(new ArmFeedforward(0, 1.3, 0));
     } else {
       io = new MechanismIOSim(minPosition, maxPosition, 200, (2.0 * Math.PI / 4096), 1.0, 1.0);
     }

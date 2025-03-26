@@ -31,6 +31,7 @@ public class MechanismIOSparkMax implements MechanismIO {
   private final SparkClosedLoopController controller;
   private ArmFeedforward armFeedforward = null;
   private ElevatorFeedforward elevatorFeedforward = null;
+  private DoubleSupplier positionOffsetSupplier = () -> 0;
   private double setpoint = 0.0;
 
   // Connection debouncers
@@ -57,6 +58,9 @@ public class MechanismIOSparkMax implements MechanismIO {
     relativeEncoder = null;
     controller = spark.getClosedLoopController();
 
+    double scaledZeroOffset = zeroOffset / encoderPositionFactor;
+    if (scaledZeroOffset < 0) scaledZeroOffset += 1;
+
     SparkMaxConfig sparkConfig = new SparkMaxConfig();
     sparkConfig
         .inverted(motorInverted)
@@ -67,7 +71,7 @@ public class MechanismIOSparkMax implements MechanismIO {
         .absoluteEncoder
         .inverted(encoderInverted)
         .zeroCentered(true)
-        .zeroOffset(zeroOffset / encoderPositionFactor)
+        .zeroOffset(scaledZeroOffset)
         .positionConversionFactor(encoderPositionFactor)
         .velocityConversionFactor(encoderVelocityFactor)
         .averageDepth(2);
@@ -206,11 +210,16 @@ public class MechanismIOSparkMax implements MechanismIO {
     double feedforwardValue = 0.0;
 
     if (armFeedforward != null && absoluteEncoder != null) {
-      feedforwardValue = armFeedforward.calculate(setpoint, 0);
+      feedforwardValue =
+          armFeedforward.calculate(setpoint + positionOffsetSupplier.getAsDouble(), 0);
     } else if (elevatorFeedforward != null && relativeEncoder != null) {
       feedforwardValue = elevatorFeedforward.calculate(0);
     }
 
     return feedforwardValue;
+  }
+
+  public void setPositionOffset(DoubleSupplier supplier) {
+    positionOffsetSupplier = supplier;
   }
 }

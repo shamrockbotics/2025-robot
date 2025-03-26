@@ -142,6 +142,10 @@ public class Mechanism extends SubsystemBase {
     return inputs.currentPosition;
   }
 
+  public void setPositionOffset(DoubleSupplier supplier) {
+    io.setPositionOffset(supplier);
+  }
+
   public double getPositionPercent() {
     return ((inputs.currentPosition - minPosition) / (maxPosition - minPosition));
   }

@@ -1,6 +1,7 @@
 package frc.robot.subsystems.mechanism;
 
 import edu.wpi.first.units.measure.Voltage;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface MechanismIO {
@@ -20,6 +21,8 @@ public interface MechanismIO {
 
   /** Run the mechanism to the specified position. */
   public default void setPosition(double position) {}
+
+  public default void setPositionOffset(DoubleSupplier supplier) {}
 
   /** Run open loop at the specified output in the range [-1, 1]. */
   public default void setOutput(double output) {}
