@@ -49,6 +49,9 @@ public class RobotContainer {
   private final Mechanism coralWrist;
   private final Mechanism elevator;
   private final Roller coralIntake;
+  private final Mechanism climber;
+
+  // Command factories
   private final CoralCommands coralCommands;
 
   // Controller
@@ -81,6 +84,7 @@ public class RobotContainer {
         coralWrist = new Mechanism(new CoralWristConfig());
         elevator = new Mechanism(new ElevatorConfig());
         coralIntake = new Roller(new CoralIntakeConfig());
+        climber = new Mechanism(new ClimberConfig());
         break;
 
       case SIM:
@@ -103,6 +107,7 @@ public class RobotContainer {
         coralWrist = new Mechanism(new CoralWristConfig(false));
         elevator = new Mechanism(new ElevatorConfig(false));
         coralIntake = new Roller(new CoralIntakeConfig(false));
+        climber = new Mechanism(new ClimberConfig(false));
         break;
 
       default:
@@ -119,6 +124,7 @@ public class RobotContainer {
         coralWrist = new Mechanism(new MechanismConfig() {});
         elevator = new Mechanism(new MechanismConfig() {});
         coralIntake = new Roller(new RollerConfig() {});
+        climber = new Mechanism(new MechanismConfig() {});
         break;
     }
     coralWrist.setPositionOffset(() -> coralElbow.getPosition());
@@ -214,6 +220,15 @@ public class RobotContainer {
     operatorController.back().whileTrue(elevator.runPercentCommand(manualRight));
     operatorController.rightBumper().whileTrue(coralElbow.runPercentCommand(manualRight));
     operatorController.leftBumper().whileTrue(coralWrist.runPercentCommand(manualLeft));
+
+    // climber controls
+    climber.setDefaultCommand(Commands.run(() -> climber.stop(), climber));
+    controller
+        .rightBumper()
+        .whileTrue(climber.runPercentCommand(() -> controller.getRightTriggerAxis()));
+    controller
+        .leftBumper()
+        .whileTrue(climber.runPercentCommand(() -> -controller.getLeftTriggerAxis()));
   }
 
   private void configureVisualization() {

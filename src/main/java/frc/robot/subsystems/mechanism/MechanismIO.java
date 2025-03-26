@@ -13,6 +13,7 @@ public interface MechanismIO {
     public boolean onTarget = false;
     public double velocity = 0.0;
     public double appliedVolts = 0.0;
+    public double appliedOutput = 0.0;
     public double currentAmps = 0.0;
   }
 

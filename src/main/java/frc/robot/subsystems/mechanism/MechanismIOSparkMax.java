@@ -184,6 +184,7 @@ public class MechanismIOSparkMax implements MechanismIO {
         spark,
         new DoubleSupplier[] {spark::getAppliedOutput, spark::getBusVoltage},
         (values) -> inputs.appliedVolts = values[0] * values[1]);
+    ifOk(spark, spark::getAppliedOutput, (value) -> inputs.appliedOutput = value);
     ifOk(spark, spark::getOutputCurrent, (value) -> inputs.currentAmps = value);
     inputs.targetPosition = setpoint;
     inputs.connected = connectedDebounce.calculate(!sparkStickyFault);

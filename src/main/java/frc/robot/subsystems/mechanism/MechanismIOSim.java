@@ -77,6 +77,7 @@ public class MechanismIOSim implements MechanismIO {
     inputs.currentPosition = encoder.getDistance();
     inputs.velocity = armSim.getVelocityRadPerSec();
     inputs.appliedVolts = appliedVolts;
+    inputs.appliedOutput = appliedVolts / maxVoltage;
     inputs.currentAmps = armSim.getCurrentDrawAmps();
   }
 
