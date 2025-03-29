@@ -34,9 +34,9 @@ public class CoralCommands {
 
   public Command coralStation() {
     return Commands.parallel(
-            elevator.runToPositionCommand(0.13),
-            coralElbow.runToPositionCommand(-0.7 + Math.PI / 2),
-            coralWrist.runToPositionCommand(0.1))
+            elevator.runToPositionCommand(0.10),
+            coralElbow.runToPositionCommand(1.72),
+            coralWrist.runToPositionCommand(-1.1))
         .until(() -> onTarget())
         .withName("Coral Station");
   }
@@ -53,35 +53,35 @@ public class CoralCommands {
   public Command l1() {
     return Commands.parallel(
             elevator.runToPositionCommand(0),
-            coralElbow.runToPositionCommand(-0.15 + Math.PI / 2),
-            coralWrist.runToPositionCommand(-1.3))
+            coralElbow.runToPositionCommand(1.75),
+            coralWrist.runToPositionCommand(-1.75))
         .until(() -> onTarget())
         .withName("L1");
   }
 
   public Command l2() {
     return Commands.parallel(
-            elevator.runToPositionCommand(0.65),
-            coralElbow.runToPositionCommand(-0.79 + Math.PI / 2),
-            coralWrist.runToPositionCommand(-1.4))
+            elevator.runToPositionCommand(0.18),
+            coralElbow.runToPositionCommand(1.71),
+            coralWrist.runToPositionCommand(-1.49))
         .until(() -> onTarget())
         .withName("L2");
   }
 
   public Command l3() {
     return Commands.parallel(
-            elevator.runToPositionCommand(1.0),
-            coralElbow.runToPositionCommand(-0.79 + Math.PI / 2),
-            coralWrist.runToPositionCommand(-1.2))
+            elevator.runToPositionCommand(0.6),
+            coralElbow.runToPositionCommand(1.71),
+            coralWrist.runToPositionCommand(-1.47))
         .until(() -> onTarget())
         .withName("L3");
   }
 
   public Command l4() {
     return Commands.parallel(
-            elevator.runToPositionCommand(1.25),
-            coralElbow.runToPositionCommand(-0.15 + Math.PI / 2),
-            coralWrist.runToPositionCommand(-1.3))
+            elevator.runToPositionCommand(1.26),
+            coralElbow.runToPositionCommand(1.84),
+            coralWrist.runToPositionCommand(-1.8))
         .until(() -> onTarget())
         .withName("L4");
   }

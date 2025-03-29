@@ -138,6 +138,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Coral Station", coralCommands.coralStation());
     NamedCommands.registerCommand("Intake", coralCommands.intake());
     NamedCommands.registerCommand("Release", coralCommands.release());
+    NamedCommands.registerCommand("Stow", coralCommands.release());
 
     fieldOriented = new LoggedNetworkBoolean("/SmartDashboard/Field Oriented", false);
 
@@ -189,7 +190,7 @@ public class RobotContainer {
             () -> -controller.getLeftY() * heightLimitMultiplier(),
             () -> -controller.getLeftX() * heightLimitMultiplier(),
             () -> -controller.getRightX() * heightLimitMultiplier(),
-            fieldOriented.get()));
+            () -> fieldOriented.get()));
 
     // Switch to X pattern when X button is pressed
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
@@ -215,8 +216,8 @@ public class RobotContainer {
     operatorController.leftTrigger().whileTrue(coralCommands.release());
 
     // coral subsystem manual control
-    DoubleSupplier manualLeft = () -> -operatorController.getLeftY() * 0.5;
-    DoubleSupplier manualRight = () -> -operatorController.getRightY() * 0.5;
+    DoubleSupplier manualLeft = () -> -operatorController.getLeftY();
+    DoubleSupplier manualRight = () -> -operatorController.getRightY();
     operatorController.back().whileTrue(elevator.runPercentCommand(manualRight));
     operatorController.rightBumper().whileTrue(coralElbow.runPercentCommand(manualRight));
     operatorController.leftBumper().whileTrue(coralWrist.runPercentCommand(manualLeft));

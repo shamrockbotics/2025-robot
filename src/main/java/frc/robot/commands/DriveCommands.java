@@ -34,6 +34,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -73,7 +74,7 @@ public class DriveCommands {
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier) {
-    return joystickDrive(drive, xSupplier, ySupplier, omegaSupplier, false);
+    return joystickDrive(drive, xSupplier, ySupplier, omegaSupplier, () -> false);
   }
 
   public static Command joystickDrive(
@@ -81,7 +82,7 @@ public class DriveCommands {
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier,
-      boolean fieldRelative) {
+      BooleanSupplier fieldRelative) {
     return Commands.run(
         () -> {
           // Get linear velocity
@@ -100,10 +101,11 @@ public class DriveCommands {
                   linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
                   linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
                   omega * drive.getMaxAngularSpeedRadPerSec());
-          if (fieldRelative) {
+          if (fieldRelative.getAsBoolean()) {
             boolean isFlipped =
                 DriverStation.getAlliance().isPresent()
-                    && DriverStation.getAlliance().get() == Alliance.Red;
+                    && DriverStation.getAlliance().get() == Alliance.Red
+                    && drive.useVision();
             drive.runVelocity(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
                     speeds,
@@ -157,7 +159,8 @@ public class DriveCommands {
                       omega);
               boolean isFlipped =
                   DriverStation.getAlliance().isPresent()
-                      && DriverStation.getAlliance().get() == Alliance.Red;
+                      && DriverStation.getAlliance().get() == Alliance.Red
+                      && drive.useVision();
               drive.runVelocity(
                   ChassisSpeeds.fromFieldRelativeSpeeds(
                       speeds,
