@@ -22,8 +22,9 @@ import edu.wpi.first.wpilibj.Filesystem;
 
 public class VisionConstants {
   // AprilTag layout
-  public static AprilTagFieldLayout aprilTagLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+  public static boolean loadHomeField = true;
+  public static String homeFieldFileName = "whshallway.json";
+  public static AprilTagFieldLayout aprilTagLayout;
 
   // Camera names, must match names configured on coprocessor
   public static String camera0Name = "back_camera";
@@ -31,7 +32,6 @@ public class VisionConstants {
   public static String camera2Name = "front_right_camera";
 
   // Robot to camera transforms
-  // (Not used by Limelight, configure in web UI instead)
   public static Transform3d robotToCamera0 =
       new Transform3d(
           Units.inchesToMeters(.565),
@@ -75,20 +75,25 @@ public class VisionConstants {
 
   // Static block to load the AprilTag layout from a file
   static {
-    try {
-      // Full path to the JSON file
-      String jsonFilePath =
-          Filesystem.getDeployDirectory()
-              + "/whshallway.json"; // Adjust this to the correct path on your system
+    if (loadHomeField) {
+      try {
+        // Full path to the JSON file
+        String jsonFilePath = Filesystem.getDeployDirectory() + "\\" + homeFieldFileName;
 
-      System.out.println("Path: " + jsonFilePath);
+        System.out.println("Loading AprilTag layout from path: " + jsonFilePath);
 
-      // aprilTagLayout = new AprilTagFieldLayout(jsonFilePath);
+        aprilTagLayout = new AprilTagFieldLayout(jsonFilePath);
 
-      System.out.println("AprilTag layout loaded successfully.");
-    } catch (Exception e) {
-      System.err.println("Error loading AprilTag layout: " + e.getMessage());
-      e.printStackTrace();
+        System.out.println(homeFieldFileName + " AprilTag layout loaded successfully.");
+      } catch (Exception e) {
+        System.err.println("Error loading AprilTag layout: " + e.getMessage());
+        e.printStackTrace();
+        aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+        System.out.println("Reefscape AndyMark AprilTag layout loaded successfully.");
+      }
+    } else {
+      aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+      System.out.println("Reefscape AndyMark AprilTag layout loaded successfully.");
     }
   }
 }

@@ -102,7 +102,6 @@ public class RobotContainer {
                 new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose),
                 new VisionIOPhotonVisionSim(camera2Name, robotToCamera2, drive::getPose));
-
         coralElbow = new Mechanism(new CoralElbowConfig(false));
         coralWrist = new Mechanism(new CoralWristConfig(false));
         elevator = new Mechanism(new ElevatorConfig(false));
@@ -144,22 +143,6 @@ public class RobotContainer {
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-    autoChooser.addOption(
-        "Leave Start",
-        DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0).withTimeout(4.0));
-    autoChooser.addOption(
-        "L4 Timed Auto",
-        Commands.sequence(
-            DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0).withTimeout(6.0),
-            coralCommands.l4().withTimeout(2.0),
-            coralCommands.release().withTimeout(2.0)));
-    autoChooser.addOption(
-        "L1 Timed Auto",
-        Commands.sequence(
-            DriveCommands.joystickDrive(drive, () -> 0.3, () -> 0, () -> 0).withTimeout(8.0),
-            coralCommands.coralStation().withTimeout(2.0),
-            coralCommands.release().withTimeout(2.0)));
 
     // Set up SysId routines
     // drive.addSysIdCommands(autoChooser);
