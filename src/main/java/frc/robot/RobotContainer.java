@@ -31,6 +31,7 @@ import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.mechanism.*;
 import frc.robot.subsystems.roller.*;
 import frc.robot.subsystems.vision.*;
+import frc.robot.subsystems.winch.*;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
@@ -49,7 +50,8 @@ public class RobotContainer {
   private final Mechanism coralWrist;
   private final Mechanism elevator;
   private final Roller coralIntake;
-  private final Mechanism climber;
+  private final Mechanism climberArm;
+  private final Winch climberWinch;
 
   // Command factories
   private final CoralCommands coralCommands;
@@ -84,7 +86,8 @@ public class RobotContainer {
         coralWrist = new Mechanism(new CoralWristConfig());
         elevator = new Mechanism(new ElevatorConfig());
         coralIntake = new Roller(new CoralIntakeConfig());
-        climber = new Mechanism(new ClimberConfig());
+        climberArm = new Mechanism(new ClimberArmConfig());
+        climberWinch = new Winch(new ClimberWinchConfig());
         break;
 
       case SIM:
@@ -106,7 +109,8 @@ public class RobotContainer {
         coralWrist = new Mechanism(new CoralWristConfig(false));
         elevator = new Mechanism(new ElevatorConfig(false));
         coralIntake = new Roller(new CoralIntakeConfig(false));
-        climber = new Mechanism(new ClimberConfig(false));
+        climberArm = new Mechanism(new ClimberArmConfig(false));
+        climberWinch = new Winch(new ClimberWinchConfig(false));
         break;
 
       default:
@@ -123,7 +127,8 @@ public class RobotContainer {
         coralWrist = new Mechanism(new MechanismConfig() {});
         elevator = new Mechanism(new MechanismConfig() {});
         coralIntake = new Roller(new RollerConfig() {});
-        climber = new Mechanism(new MechanismConfig() {});
+        climberArm = new Mechanism(new MechanismConfig() {});
+        climberWinch = new Winch(new WinchConfig() {});
         break;
     }
     coralWrist.setPositionOffset(() -> coralElbow.getPosition());
@@ -205,14 +210,17 @@ public class RobotContainer {
     operatorController.rightBumper().whileTrue(coralElbow.runPercentCommand(manualRight));
     operatorController.leftBumper().whileTrue(coralWrist.runPercentCommand(manualLeft));
 
-    // climber controls
-    climber.setDefaultCommand(Commands.run(() -> climber.stop(), climber));
-    controller
-        .rightBumper()
-        .whileTrue(climber.runPercentCommand(() -> controller.getRightTriggerAxis()));
+    // climber subsystem controls
     controller
         .leftBumper()
-        .whileTrue(climber.runPercentCommand(() -> -controller.getLeftTriggerAxis()));
+        .whileTrue(
+            climberArm.runPercentCommand(
+                () -> (controller.getRightTriggerAxis() - controller.getLeftTriggerAxis()) * 0.5));
+    controller
+        .rightBumper()
+        .whileTrue(
+            climberWinch.runPercentCommand(
+                () -> (controller.getRightTriggerAxis() - controller.getLeftTriggerAxis())));
   }
 
   private void configureVisualization() {
