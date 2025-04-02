@@ -36,7 +36,7 @@ public class CoralCommands {
     return Commands.parallel(
             elevator.runToPositionCommand(0.10),
             coralElbow.runToPositionCommand(1.72),
-            coralWrist.runToPositionCommand(-1.1))
+            coralWrist.runToPositionCommand(-0.7))
         .until(() -> onTarget())
         .withName("Coral Station");
   }
@@ -79,9 +79,9 @@ public class CoralCommands {
 
   public Command l4() {
     return Commands.parallel(
-            elevator.runToPositionCommand(1.26),
+            elevator.runToPositionCommand(1.25),
             coralElbow.runToPositionCommand(1.84),
-            coralWrist.runToPositionCommand(-1.8))
+            coralWrist.runToPositionCommand(-1.57))
         .until(() -> onTarget())
         .withName("L4");
   }

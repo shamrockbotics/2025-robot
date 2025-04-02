@@ -56,7 +56,7 @@ public class DriveConstants {
 
   // Drive motor configuration
   public static final int driveMotorCurrentLimit = 50;
-  public static final double wheelRadiusMeters = 0.055;
+  public static final double wheelRadiusMeters = 0.05;
   public static final double driveMotorReduction = 6.75; // L2 MK4i gear ratio
   public static final DCMotor driveGearbox = DCMotor.getNEO(1);
 
@@ -69,8 +69,8 @@ public class DriveConstants {
   // Drive PID configuration
   public static final double driveKp = 0.0;
   public static final double driveKd = 0.0;
-  public static final double driveKs = 0.16485;
-  public static final double driveKv = 0.14152;
+  public static final double driveKs = 0.18;
+  public static final double driveKv = 0.146;
   public static final double driveSimP = 0.05;
   public static final double driveSimD = 0.0;
   public static final double driveSimKs = 0.0;

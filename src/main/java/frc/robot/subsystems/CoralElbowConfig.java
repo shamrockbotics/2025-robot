@@ -18,7 +18,7 @@ public class CoralElbowConfig extends MechanismConfig {
     if (real) {
       io =
           new MechanismIOSparkMax(
-                  13, 1.63, false, true, 2 * Math.PI, 2 * Math.PI / 60, 40, 3.0, 1.7, 0.0)
+                  13, 1.5, false, true, 2 * Math.PI, 2 * Math.PI / 60, 40, 2.5, 1.7, 0.0)
               .addFeedforward(new ArmFeedforward(0, 1.3, 0));
     } else {
       io = new MechanismIOSim(minPosition, maxPosition, 200, (2.0 * Math.PI / 4096), 1.0, 1.0);

@@ -144,7 +144,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Release", coralCommands.release());
     NamedCommands.registerCommand("Stow", coralCommands.release());
 
-    fieldOriented = new LoggedNetworkBoolean("/SmartDashboard/Field Oriented", false);
+    fieldOriented = new LoggedNetworkBoolean("/SmartDashboard/Field Oriented", true);
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
