@@ -2,9 +2,9 @@ package frc.robot.subsystems.winch;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.function.DoubleSupplier;
@@ -17,20 +17,6 @@ public class Winch extends SubsystemBase {
   private final SysIdRoutine sysId;
 
   private final Alert disconnectedAlert;
-
-  private boolean holding = false;
-  private double setpoint = 0.0;
-  private double lastRunPosition = 0.0;
-
-  public MechanismLigament2d visualization;
-  public DoubleSupplier visualizationAngleOffset = () -> 0.0;
-  public DoubleSupplier visualizationLengthOffset = () -> 0.0;
-  public boolean visualizationReversed = false;
-
-  public static enum MotionType {
-    LINEAR,
-    ANGULAR
-  }
 
   public Winch(WinchConfig config) {
     setName(config.name);
@@ -46,8 +32,6 @@ public class Winch extends SubsystemBase {
             new SysIdRoutine.Mechanism(io::setVoltage, null, this));
 
     disconnectedAlert = new Alert(getName() + " disconnected.", AlertType.kError);
-
-    visualization = new MechanismLigament2d(getName(), 1, lastRunPosition);
 
     setDefaultCommand(stopCommand());
 
@@ -82,6 +66,16 @@ public class Winch extends SubsystemBase {
 
   public Command runPercentCommand(DoubleSupplier valueSupplier) {
     return run(() -> run(valueSupplier.getAsDouble())).withName("Run Percent");
+  }
+
+  public Command winchCommand() {
+    return Commands.sequence(run(() -> io.engageRatchet()).withTimeout(0.1), run(() -> run(1.0)))
+        .withName("Winch");
+  }
+
+  public Command releaseCommand() {
+    return Commands.sequence(run(() -> io.releaseRatchet()).withTimeout(0.5), run(() -> run(-0.1)))
+        .withName("Release");
   }
 
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {

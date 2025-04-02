@@ -11,6 +11,7 @@ public interface WinchIO {
     public double appliedVolts = 0.0;
     public double appliedOutput = 0.0;
     public double currentAmps = 0.0;
+    public double ratchetOutput = 0.0;
   }
 
   /** Update the set of loggable inputs. */
@@ -21,4 +22,10 @@ public interface WinchIO {
 
   /** Run open loop at the specified voltage. */
   public default void setVoltage(Voltage voltage) {}
+
+  /** Engage the ratchet */
+  public default void engageRatchet() {}
+
+  /** Release the ratchet */
+  public default void releaseRatchet() {}
 }

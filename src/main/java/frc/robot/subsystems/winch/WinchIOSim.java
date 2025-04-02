@@ -3,7 +3,6 @@ package frc.robot.subsystems.winch;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.Voltage;
@@ -14,16 +13,13 @@ public class WinchIOSim implements WinchIO {
   private final DCMotorSim motorSim;
 
   private DCMotor gearbox = DCMotor.getNEO(1);
-  private PIDController controller = new PIDController(50, 0, 0);
 
-  private boolean closedLoop = false;
   private double appliedVolts = 0.0;
 
   double maxVoltage = 12.0;
 
   public WinchIOSim(double gearReduction, double radsPerPulse, double lengthMeters, double massKg) {
     double moi = SingleJointedArmSim.estimateMOI(lengthMeters, massKg);
-
     motorSim =
         new DCMotorSim(LinearSystemId.createDCMotorSystem(gearbox, moi, gearReduction), gearbox);
   }
@@ -45,13 +41,11 @@ public class WinchIOSim implements WinchIO {
 
   @Override
   public void setOutput(double output) {
-    closedLoop = false;
     appliedVolts = output * maxVoltage;
   }
 
   @Override
   public void setVoltage(Voltage voltage) {
-    closedLoop = false;
     appliedVolts = voltage.in(Volts);
   }
 }
