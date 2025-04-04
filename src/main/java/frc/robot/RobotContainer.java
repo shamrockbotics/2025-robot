@@ -203,6 +203,8 @@ public class RobotContainer {
     operatorController.start().onTrue(coralCommands.stow());
     operatorController.rightTrigger().whileTrue(coralCommands.intake());
     operatorController.leftTrigger().whileTrue(coralCommands.release());
+    operatorController.povUp().whileTrue(coralCommands.climb());
+
 
     // coral subsystem manual control
     DoubleSupplier manualLeft = () -> -operatorController.getLeftY();
@@ -223,7 +225,7 @@ public class RobotContainer {
             climberWinch.runPercentCommand(
                 () -> (controller.getRightTriggerAxis() - controller.getLeftTriggerAxis())));
   }
-
+//code for using the dpad?
   /*controller POVButton UpPov = new POVButton(driverController, 90);
     POVButton[] dpad = new POVButton[] (up, upRight, right,downRight),
 
@@ -236,7 +238,7 @@ public class RobotContainer {
 
       stick = new Joystick(port);
 
-      buttons[LB] = new JoystickButton(getStick(), LB);*
+      buttons[LB] = new JoystickButton(getStick(), LB);*/
     }
 
 
