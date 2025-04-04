@@ -139,7 +139,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("L1", coralCommands.l1());
     NamedCommands.registerCommand("L2", coralCommands.l2());
     NamedCommands.registerCommand("L3", coralCommands.l3());
-    NamedCommands.registerCommand("L4", coralCommands.l4());
+    NamedCommands.registerCommand("L4", coralCommands.l4Auto());
     NamedCommands.registerCommand("Coral Station", coralCommands.coralStation());
     NamedCommands.registerCommand("Intake", coralCommands.intake());
     NamedCommands.registerCommand("Release", coralCommands.release());
