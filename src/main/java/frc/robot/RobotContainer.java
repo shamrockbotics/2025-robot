@@ -20,11 +20,14 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.drive.*;
@@ -221,7 +224,24 @@ public class RobotContainer {
         .whileTrue(
             climberWinch.runPercentCommand(
                 () -> (controller.getRightTriggerAxis() - controller.getLeftTriggerAxis())));
+
   }
+
+    /*controller POVButton UpPov = new POVButton(driverController, 90);
+    POVButton[] dpad = new POVButton[] (up, upRight, right,downRight),
+    
+    public static final int LEFT_HORIZONTAL = 0, //RIGHT_HORIZONTAL = 2,
+            LEFT_VERTICAL = 1; //RIGHT_VERTICAL = 3;
+
+    public static final double DEADZONE = 0.075;
+
+    public Controller(int port) {
+
+      stick = new Joystick(port);
+
+      buttons[LB] = new JoystickButton(getStick(), LB);*/
+    }
+
 
   private void configureVisualization() {
     Mechanism2d sideView = new Mechanism2d(2, 2);
