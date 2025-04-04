@@ -239,8 +239,15 @@ public class RobotContainer {
 
       stick = new Joystick(port);
 
-      buttons[LB] = new JoystickButton(getStick(), LB);*/
+      buttons[LB] = new JoystickButton(getStick(), LB);*
     }
+      
+
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
 
 
   private void configureVisualization() {
@@ -259,12 +266,6 @@ public class RobotContainer {
 
     SmartDashboard.putData("Side View", sideView);
   }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
   public Command getAutonomousCommand() {
     return autoChooser.get();
   }
