@@ -86,6 +86,15 @@ public class CoralCommands {
         .withName("L4");
   }
 
+  public Command climb()  {
+    return Commands.parallel(
+            elevator.runToPositionCommand(0.18),
+            coralElbow.runToPositionCommand(-0.07),
+            coralWrist.runToPositionCommand(-1.53))
+        .until(() -> onTarget())
+        .withName("Climb");
+  }
+
   public Command intake() {
     return coralIntake.intakeCommand();
   }

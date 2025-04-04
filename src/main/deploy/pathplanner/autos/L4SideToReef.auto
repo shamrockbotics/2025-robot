@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "L1Side"
+            "pathName": "L4Side"
           }
         },
         {
@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "L1"
+                  "name": "L4"
                 }
               },
               {

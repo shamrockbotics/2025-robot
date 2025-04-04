@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "StartToReef1"
+                  "pathName": "MiddleStartToReef1"
                 }
               },
               {
@@ -33,7 +33,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 2.5
+                        "waitTime": 3.0
                       }
                     }
                   ]

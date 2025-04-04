@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "StartToReef1"
+                  "pathName": "MiddleStartToReef1"
                 }
               },
               {
@@ -141,6 +141,32 @@
                       "type": "wait",
                       "data": {
                         "waitTime": 2.0
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BackUpFromReef2"
+                }
+              },
+              {
+                "type": "race",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Coral Station"
                       }
                     }
                   ]
