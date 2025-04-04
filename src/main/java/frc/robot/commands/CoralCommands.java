@@ -86,7 +86,7 @@ public class CoralCommands {
         .withName("L4");
   }
 
-  public Command climb()  {
+  public Command climb() {
     return Commands.parallel(
             elevator.runToPositionCommand(0.18),
             coralElbow.runToPositionCommand(-0.07),
