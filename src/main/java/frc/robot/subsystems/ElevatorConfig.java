@@ -24,7 +24,7 @@ public class ElevatorConfig extends MechanismConfig {
                   2 * Math.PI * 0.0228 * 2 / 60,
                   40,
                   12.0,
-                  5.0,
+                  4.0,
                   0.0)
               .addFollower(9, true)
               .addFeedforward(new ElevatorFeedforward(0, 1.0, 0));
