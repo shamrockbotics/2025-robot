@@ -205,7 +205,6 @@ public class RobotContainer {
     operatorController.leftTrigger().whileTrue(coralCommands.release());
     operatorController.povUp().whileTrue(coralCommands.climb());
 
-
     // coral subsystem manual control
     DoubleSupplier manualLeft = () -> -operatorController.getLeftY();
     DoubleSupplier manualRight = () -> -operatorController.getRightY();
@@ -225,29 +224,27 @@ public class RobotContainer {
             climberWinch.runPercentCommand(
                 () -> (controller.getRightTriggerAxis() - controller.getLeftTriggerAxis())));
   }
-//code for using the dpad?
+
+  // code for using the dpad?
   /*controller POVButton UpPov = new POVButton(driverController, 90);
-    POVButton[] dpad = new POVButton[] (up, upRight, right,downRight),
+  POVButton[] dpad = new POVButton[] (up, upRight, right,downRight),
 
-    public static final int LEFT_HORIZONTAL = 0, //RIGHT_HORIZONTAL = 2,
-            LEFT_VERTICAL = 1; //RIGHT_VERTICAL = 3;
+  public static final int LEFT_HORIZONTAL = 0, //RIGHT_HORIZONTAL = 2,
+          LEFT_VERTICAL = 1; //RIGHT_VERTICAL = 3;
 
-    public static final double DEADZONE = 0.075;
+  public static final double DEADZONE = 0.075;
 
-    public Controller(int port) {
+  public Controller(int port) {
 
-      stick = new Joystick(port);
+    stick = new Joystick(port);
 
-      buttons[LB] = new JoystickButton(getStick(), LB);*/
-    
-
+    buttons[LB] = new JoystickButton(getStick(), LB);*/
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
-
   private void configureVisualization() {
     Mechanism2d sideView = new Mechanism2d(2, 2);
 
