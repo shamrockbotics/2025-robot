@@ -11,7 +11,7 @@ public class ClimberWinchConfig extends WinchConfig {
     name = "Climber Winch";
     if (real) {
       io =
-          new WinchIOSparkMax(11, false, true, 100 * 2 * Math.PI, 100 * 2 * Math.PI / 60, 40, 12.0)
+          new WinchIOSparkMax(11, true, true, 100 * 2 * Math.PI, 100 * 2 * Math.PI / 60, 40, 12.0)
               .addFollower(12, true)
               .addServo(9, 0.5, 1.0);
     } else {
