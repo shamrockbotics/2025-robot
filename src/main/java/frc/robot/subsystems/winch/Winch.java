@@ -52,6 +52,11 @@ public class Winch extends SubsystemBase {
    * @param value Output value, -1 to +1
    */
   public void run(double value) {
+    if (value < 0) {
+      io.releaseRatchet();
+    } else {
+      io.engageRatchet();
+    }
     io.setOutput(value);
   }
 

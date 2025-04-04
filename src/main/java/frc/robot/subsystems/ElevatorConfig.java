@@ -24,10 +24,10 @@ public class ElevatorConfig extends MechanismConfig {
                   2 * Math.PI * 0.0228 * 2 / 60,
                   40,
                   12.0,
-                  4.0,
+                  3.0,
                   0.0)
               .addFollower(9, true)
-              .addFeedforward(new ElevatorFeedforward(0, 1.0, 0));
+              .addFeedforward(new ElevatorFeedforward(0, 2.0, 0));
     } else {
       io = new MechanismIOSim(minPosition, maxPosition, 200, (2.0 * Math.PI / 4096), 1.0, 1.0);
     }
