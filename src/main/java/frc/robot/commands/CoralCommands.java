@@ -80,7 +80,7 @@ public class CoralCommands {
   public Command l4() {
     return Commands.parallel(
             elevator.runToPositionCommand(1.25),
-            coralElbow.runToPositionCommand(1.84),
+            coralElbow.runToPositionCommand(1.8),
             coralWrist.runToPositionCommand(-1.57))
         .until(() -> onTarget())
         .withName("L4");
