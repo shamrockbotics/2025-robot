@@ -79,7 +79,7 @@ public class CoralCommands {
 
   public Command l4() {
     return Commands.parallel(
-            elevator.runToPositionCommand(1.25),
+            elevator.runToPositionCommand(1.25), //might have to increase; may be a mechanical error
             coralElbow.runToPositionCommand(1.87),
             coralWrist.runToPositionCommand(-1.57))
         .until(() -> onTarget())
@@ -90,7 +90,7 @@ public class CoralCommands {
     return Commands.parallel(
             elevator.runToPositionCommand(1.25),
             coralElbow.runToPositionCommand(1.67),
-            coralWrist.runToPositionCommand(-1.57))
+            coralWrist.runToPositionCommand(-1.54))
         .until(() -> onTarget())
         .withName("L4");
   }
